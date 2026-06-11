@@ -8,19 +8,29 @@ class StatistiquesController extends AppController
     {
         $redirect = $this->requireLogin();
         if ($redirect) return $redirect;
+
         $Interventions = $this->getTableLocator()->get("Interventions");
-        $total = $Interventions->find()->count();
-        $resolues = $Interventions->find()->where(["statut" => "repare"])->count();
-        $enCours = $Interventions->find()->where(["statut" => "cours"])->count();
+        $total      = $Interventions->find()->count();
+        $resolues   = $Interventions->find()->where(["statut" => "repare"])->count();
+        $enCours    = $Interventions->find()->where(["statut" => "cours"])->count();
         $reparables = $Interventions->find()->where(["statut" => "reparable"])->count();
         $taux = $total > 0 ? round(($resolues / $total) * 100, 1) : 0;
+
+        // Stats par type
         $parType = [
-            "resolution_probleme" => $Interventions->find()->where(["type_intervention" => "resolution_probleme"])->count(),
+            "resolution_probleme"        => $Interventions->find()->where(["type_intervention" => "resolution_probleme"])->count(),
             "installation_configuration" => $Interventions->find()->where(["type_intervention" => "installation_configuration"])->count(),
-            "restoration_mise_a_niveau" => $Interventions->find()->where(["type_intervention" => "restoration_mise_a_niveau"])->count(),
+            "restoration_mise_a_niveau"  => $Interventions->find()->where(["type_intervention" => "restoration_mise_a_niveau"])->count(),
             "supervision_fonctionnement" => $Interventions->find()->where(["type_intervention" => "supervision_fonctionnement"])->count(),
             "supervision_analyse_pannes" => $Interventions->find()->where(["type_intervention" => "supervision_analyse_pannes"])->count(),
         ];
-        $this->set(compact("total","resolues","enCours","reparables","taux","parType"));
+
+        // Dernieres interventions avec description_travaux
+        $dernieres = $Interventions->find()
+            ->orderBy(["created" => "DESC"])
+            ->limit(15)
+            ->toArray();
+
+        $this->set(compact("total","resolues","enCours","reparables","taux","parType","dernieres"));
     }
 }

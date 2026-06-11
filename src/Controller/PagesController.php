@@ -11,15 +11,26 @@ class PagesController extends AppController
         if (!$this->isLoggedIn()) { $this->redirect("/login"); return; }
         $Interventions = $this->getTableLocator()->get("Interventions");
         $Livrables = $this->getTableLocator()->get("Livrables");
+        $total      = $Interventions->find()->count();
+        $resolues   = $Interventions->find()->where(["statut"=>"repare"])->count();
+        $enCours    = $Interventions->find()->where(["statut"=>"cours"])->count();
+        $reparables = $Interventions->find()->where(["statut"=>"reparable"])->count();
         $stats = [
-            ["label"=>"Total","value"=>$Interventions->find()->count(),"sub"=>"Toutes","icon"=>"&#9874;"],
-            ["label"=>"Resolues","value"=>$Interventions->find()->where(["statut"=>"repare"])->count(),"sub"=>"Reglees","icon"=>"&#10003;"],
-            ["label"=>"En Cours","value"=>$Interventions->find()->where(["statut"=>"cours"])->count(),"sub"=>"Traitement","icon"=>"&#9203;"],
-            ["label"=>"Reparables","value"=>$Interventions->find()->where(["statut"=>"reparable"])->count(),"sub"=>"En attente","icon"=>"&#128295;"],
+            ["label"=>"Total",     "value"=>$total,     "sub"=>"Toutes",    "icon"=>"&#9874;"],
+            ["label"=>"Resolues",  "value"=>$resolues,  "sub"=>"Reglees",   "icon"=>"&#10003;"],
+            ["label"=>"En Cours",  "value"=>$enCours,   "sub"=>"Traitement","icon"=>"&#9203;"],
+            ["label"=>"Reparables","value"=>$reparables,"sub"=>"En attente","icon"=>"&#128295;"],
         ];
-        $livrablesList = $Livrables->find()->orderBy(["date_livraison"=>"DESC"])->limit(5)->toArray();
+        $countByType = [
+            "resolution_probleme"        => $Interventions->find()->where(["type_intervention"=>"resolution_probleme"])->count(),
+            "installation_configuration" => $Interventions->find()->where(["type_intervention"=>"installation_configuration"])->count(),
+            "restoration_mise_a_niveau"  => $Interventions->find()->where(["type_intervention"=>"restoration_mise_a_niveau"])->count(),
+            "supervision_fonctionnement" => $Interventions->find()->where(["type_intervention"=>"supervision_fonctionnement"])->count(),
+            "supervision_analyse_pannes" => $Interventions->find()->where(["type_intervention"=>"supervision_analyse_pannes"])->count(),
+        ];
+        $livrablesList       = $Livrables->find()->orderBy(["date_livraison"=>"DESC"])->limit(5)->toArray();
         $recentInterventions = $Interventions->find()->orderBy(["created"=>"DESC"])->limit(10)->toArray();
-        $this->set(compact("stats","livrablesList","recentInterventions"));
+        $this->set(compact("stats","livrablesList","recentInterventions","countByType","total","resolues","enCours","reparables"));
     }
 
     public function apropos(): void { $this->set("showOverlay","apropos"); $this->render("home"); }
@@ -57,10 +68,28 @@ class PagesController extends AppController
         $redirect = $this->requireLogin();
         if ($redirect) return;
         $Interventions = $this->getTableLocator()->get("Interventions");
-        $total = $Interventions->find()->count();
+        $total    = $Interventions->find()->count();
         $resolues = $Interventions->find()->where(["statut"=>"repare"])->count();
-        $enCours = $Interventions->find()->where(["statut"=>"cours"])->count();
-        $recentInterventions = $Interventions->find()->orderBy(["created"=>"DESC"])->limit(50)->toArray();
-        $this->set(compact("total","resolues","enCours","recentInterventions"));
+        $enCours  = $Interventions->find()->where(["statut"=>"cours"])->count();
+
+        $parType = [
+            "resolution_probleme"        => $Interventions->find()->where(["type_intervention"=>"resolution_probleme"])->count(),
+            "installation_configuration" => $Interventions->find()->where(["type_intervention"=>"installation_configuration"])->count(),
+            "restoration_mise_a_niveau"  => $Interventions->find()->where(["type_intervention"=>"restoration_mise_a_niveau"])->count(),
+            "supervision_fonctionnement" => $Interventions->find()->where(["type_intervention"=>"supervision_fonctionnement"])->count(),
+            "supervision_analyse_pannes" => $Interventions->find()->where(["type_intervention"=>"supervision_analyse_pannes"])->count(),
+        ];
+
+        $allInterventions = $Interventions->find()->orderBy(["date_intervention"=>"DESC"])->toArray();
+
+        $grouped = [];
+        foreach($allInterventions as $i) {
+            $type = $i->type_intervention;
+            if(!isset($grouped[$type])) $grouped[$type] = [];
+            $grouped[$type][] = $i;
+        }
+
+        $recentInterventions = $allInterventions;
+        $this->set(compact("total","resolues","enCours","parType","grouped","recentInterventions"));
     }
 }

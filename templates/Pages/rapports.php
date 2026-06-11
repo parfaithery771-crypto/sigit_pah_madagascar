@@ -3,18 +3,19 @@ $session = $this->request->getSession();
 $u = $session->read("Auth.nom") ?? "";
 $r = $session->read("Auth.role") ?? "";
 $taux = $total > 0 ? round(($resolues/$total)*100,1) : 0;
+
 $data = [
-    ["points"=>"Maintenir en premier degre les materiels TIC","realisation"=>"Resolution probleme et maintenance des materiels informatiques","perspectives"=>"Materiel informatique en etat de marche","type"=>"maintenance_premier_degre"],
+    ["points"=>"Maintenir en premier degre les materiels TIC","realisation"=>"Resolution probleme et maintenance des materiels informatiques","perspectives"=>"Materiel informatique en etat de marche","type"=>"resolution_probleme"],
     ["points"=>"Installer et configurer les nouveaux materiels et equipements informatiques","realisation"=>"Installation et configuration des materiels informatiques","perspectives"=>"Tous les materiels TIC du ministere en etat de marche","type"=>"installation_configuration"],
     ["points"=>"Installation des materiels TIC","realisation"=>"Restitution et mise a niveau des logiciels informatiques","perspectives"=>"Assurer la reinstallation des materiels TIC","type"=>"restoration_mise_a_niveau"],
-    ["points"=>"Effectuer des maintenances preventive et curative pour le bon fonctionnement des parcs informatiques","realisation"=>"Assurer que les parcs informatiques sont en bon etat de fonctionnement","perspectives"=>"Materiel en bon fonctionnement","type"=>"maintenance_preventive_curative"],
+    ["points"=>"Effectuer des maintenances preventive et curative","realisation"=>"Assurer que les parcs informatiques sont en bon etat de fonctionnement","perspectives"=>"Materiel en bon fonctionnement","type"=>"supervision_fonctionnement"],
     ["points"=>"Surveiller et verifier les problemes et pannes connexion internet","realisation"=>"Supervision et analyse des pannes","perspectives"=>"Reseau local et internet du Ministere fonctionnel","type"=>"supervision_analyse_pannes"],
 ];
 ?>
 <div class="app">
 <div class="sidebar">
-<div class="sidebar-header"><svg width="36" height="36" viewBox="0 0 120 120"><circle cx="60" cy="60" r="58" fill="none" stroke="#2D8C4E" stroke-width="2"/><rect x="32" y="38" width="56" height="36" rx="4" fill="none" stroke="#2D8C4E" stroke-width="2"/><circle cx="46" cy="56" r="4" fill="#C8963E"/><circle cx="60" cy="50" r="4" fill="#C8963E"/><circle cx="74" cy="56" r="4" fill="#C8963E"/><circle cx="60" cy="62" r="4" fill="#2D8C4E"/></svg>
-<div><div class="sidebar-logo-text">SIGIT</div><div class="sidebar-sub">Ministere du Numerique</div></div>
+<div class="sidebar-header"><img src="/img/logo_mincc.png" style="width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(184,150,46,0.4))">
+<div><div class="sidebar-logo-text">SIGIT</div><div class="sidebar-sub">Ministere du Commerce et de la Consommation</div></div>
 </div>
 <nav class="nav">
 <div class="nav-section">Principal</div>
@@ -41,43 +42,74 @@ $data = [
 </div>
 <div class="content">
 <?= $this->Flash->render() ?>
+
+<!-- Cartes résumé -->
 <div class="stats-row">
 <div class="stat-card" style="border-top:2px solid #C8963E"><div class="stat-label">Total</div><div class="stat-value"><?= $total ?></div><div class="stat-sub">Interventions</div><div class="stat-icon">&#9874;</div></div>
 <div class="stat-card" style="border-top:2px solid #2D8C4E"><div class="stat-label">Resolues</div><div class="stat-value"><?= $resolues ?></div><div class="stat-sub">Taux: <?= $taux ?>%</div><div class="stat-icon">&#10003;</div></div>
 <div class="stat-card" style="border-top:2px solid #C8963E"><div class="stat-label">En Cours</div><div class="stat-value"><?= $enCours ?></div><div class="stat-sub">En traitement</div><div class="stat-icon">&#9203;</div></div>
-<div class="stat-card" style="border-top:2px solid #5EC878">
-<div class="stat-label">Taux Resolution</div><div class="stat-value"><?= $taux ?>%</div><div class="stat-sub">Performance</div><div class="stat-icon">&#128200;</div></div>
+<div class="stat-card" style="border-top:2px solid #5EC878"><div class="stat-label">Taux Resolution</div><div class="stat-value"><?= $taux ?>%</div><div class="stat-sub">Performance</div><div class="stat-icon">&#128200;</div></div>
 </div>
+
+<!-- Tableau rapport principal -->
 <div class="panel">
 <div class="panel-header">
-<div class="panel-title">&#128196; RAPPORT D ACTIVITE â€” SERVICE SRM â€” MINISTERE DU NUMERIQUE</div>
+<div class="panel-title">&#128196; RAPPORT D ACTIVITE | SERVICE SRM | Ministere du Commerce et de la Consommation</div>
 </div>
 <div class="panel-body">
 <div style="overflow-x:auto">
 <table style="width:100%;border-collapse:collapse">
 <thead>
 <tr style="background:rgba(200,150,62,0.15)">
-<th style="padding:0.85rem;text-align:left;font-size:0.75rem;color:#C8963E;border:1px solid rgba(200,150,62,0.25);width:30%">POINTS EVOQUES</th>
-<th style="padding:0.85rem;text-align:left;font-size:0.75rem;color:#C8963E;border:1px solid rgba(200,150,62,0.25);width:35%">REALISATION OU ACTIONS ENTREPRISES</th>
+<th style="padding:0.85rem;text-align:left;font-size:0.75rem;color:#C8963E;border:1px solid rgba(200,150,62,0.25);width:22%">POINTS EVOQUES</th>
+<th style="padding:0.85rem;text-align:left;font-size:0.75rem;color:#C8963E;border:1px solid rgba(200,150,62,0.25);width:25%">REALISATION OU ACTIONS ENTREPRISES</th>
 <th style="padding:0.85rem;text-align:left;font-size:0.75rem;color:#C8963E;border:1px solid rgba(200,150,62,0.25);width:25%">PERSPECTIVES ET NOUVELLES ACTIONS</th>
-<th style="padding:0.85rem;text-align:center;font-size:0.75rem;color:#C8963E;border:1px solid rgba(200,150,62,0.25);width:10%">NB</th>
+<th style="padding:0.85rem;text-align:left;font-size:0.75rem;color:#C8963E;border:1px solid rgba(200,150,62,0.25);width:20%">TRAVAUX EFFECTUES</th>
+<th style="padding:0.85rem;text-align:center;font-size:0.75rem;color:#C8963E;border:1px solid rgba(200,150,62,0.25);width:8%">NB</th>
 </tr>
 </thead>
 <tbody>
 <?php foreach($data as $row):
-$nb = $total > 0 ? $recentInterventions ? count(array_filter($recentInterventions,function($i) use($row){return $i->type_intervention===$row["type"];})) : 0 : 0;
+$interventionsType = $grouped[$row["type"]] ?? [];
+$nb = count($interventionsType);
 ?>
 <tr style="border-bottom:1px solid rgba(200,150,62,0.1)">
+
+<!-- Points evoqués -->
 <td style="padding:0.85rem;font-size:0.82rem;color:rgba(250,248,242,0.85);border:1px solid rgba(200,150,62,0.1);vertical-align:top">
 <span style="color:#C8963E;margin-right:0.4rem">&#9679;</span><?= h($row["points"]) ?>
 </td>
+
+<!-- Réalisation -->
 <td style="padding:0.85rem;font-size:0.82rem;color:rgba(250,248,242,0.75);border:1px solid rgba(200,150,62,0.1);vertical-align:top;font-style:italic">
 <?= h($row["realisation"]) ?>
 </td>
+
+<!-- Perspectives -->
 <td style="padding:0.85rem;font-size:0.82rem;color:#5EC878;border:1px solid rgba(200,150,62,0.1);vertical-align:top">
 &#10003; <?= h($row["perspectives"]) ?>
 </td>
-<td style="padding:0.85rem;text-align:center;font-size:0.85rem;color:#C8963E;border:1px solid rgba(200,150,62,0.1);vertical-align:top;font-weight:bold">
+
+<!-- Travaux reels effectues -->
+<td style="padding:0.85rem;font-size:0.78rem;border:1px solid rgba(200,150,62,0.1);vertical-align:top">
+<?php if(!empty($interventionsType)): ?>
+  <?php foreach($interventionsType as $interv): ?>
+  <div style="margin-bottom:0.5rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(200,150,62,0.08)">
+    <div style="color:rgba(250,248,242,0.5);font-size:0.7rem"><?= h($interv->date_intervention) ?> — <?= h($interv->beneficiaire) ?></div>
+    <?php if(!empty($interv->description_travaux)): ?>
+    <div style="color:#5EC878;margin-top:0.2rem">&#9658; <?= h($interv->description_travaux) ?></div>
+    <?php else: ?>
+    <div style="color:rgba(250,248,242,0.3);font-style:italic">Non renseigne</div>
+    <?php endif; ?>
+  </div>
+  <?php endforeach; ?>
+<?php else: ?>
+  <em style="color:rgba(250,248,242,0.3)">Aucune</em>
+<?php endif; ?>
+</td>
+
+<!-- NB -->
+<td style="padding:0.85rem;text-align:center;font-size:1rem;color:#C8963E;border:1px solid rgba(200,150,62,0.1);vertical-align:top;font-weight:bold">
 <?= $nb ?>
 </td>
 </tr>
@@ -85,44 +117,15 @@ $nb = $total > 0 ? $recentInterventions ? count(array_filter($recentIntervention
 </tbody>
 <tfoot>
 <tr style="background:rgba(200,150,62,0.08)">
-<td colspan="3" style="padding:0.75rem;font-size:0.8rem;color:rgba(250,248,242,0.5);border:1px solid rgba(200,150,62,0.15);text-align:right;font-style:italic">Total general des interventions</td>
+<td colspan="4" style="padding:0.75rem;font-size:0.8rem;color:rgba(250,248,242,0.5);border:1px solid rgba(200,150,62,0.15);text-align:right;font-style:italic">Total general des interventions</td>
 <td style="padding:0.75rem;text-align:center;font-size:1rem;color:#C8963E;font-weight:bold;border:1px solid rgba(200,150,62,0.15)"><?= $total ?></td>
 </tr>
 </tfoot>
 </table>
 </div>
-<div style="margin-top:1.5rem;padding:1rem;background:rgba(200,150,62,0.05);border:1px solid rgba(200,150,62,0.15);border-radius:8px">
-<div style="font-size:0.75rem;color:rgba(250,248,242,0.4);margin-bottom:0.5rem">BARRE DE PERFORMANCE GLOBALE</div>
-<div style="background:rgba(250,248,242,0.06);border-radius:8px;height:20px;overflow:hidden;margin-bottom:0.5rem">
-<div style="width:<?= $taux ?>%;height:100%;background:linear-gradient(to right,#2D8C4E,#5EC878);border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding-right:0.5rem">
-<span style="font-size:0.7rem;color:#fff;font-weight:bold"><?= $taux ?>%</span>
 </div>
 </div>
-<div style="font-size:0.78rem;color:rgba(250,248,242,0.5)"><?= $resolues ?> interventions resolues sur <?= $total ?> au total â€” SERVICE SRM, Ministere du Numerique et de la Communication</div>
-</div>
-</div>
-</div>
-<div class="panel" style="margin-top:1.25rem">
-<div class="panel-header"><div class="panel-title">&#9874; Interventions Enregistrees</div><a href="/interventions" class="btn-action">Voir tout</a></div>
-<div class="panel-body">
-<table>
-<thead><tr><th>Date</th><th>Beneficiaire</th><th>Type / Mission</th><th>Realisation</th><th>Statut</th></tr></thead>
-<tbody>
-<?php if(empty($recentInterventions)): ?>
-<tr><td colspan="5" style="text-align:center;color:rgba(250,248,242,0.4);font-style:italic;padding:2rem">Aucune intervention enregistree.</td></tr>
-<?php else: foreach($recentInterventions as $i): ?>
-<tr>
-<td><?= h($i->date_intervention) ?></td>
-<td><?= h($i->beneficiaire) ?></td>
-<td style="font-size:0.75rem"><?= h(str_replace("_"," ",$i->type_intervention)) ?></td>
-<td style="font-size:0.75rem;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><?= h(substr($i->observation??"-",0,40)) ?><?= strlen($i->observation??"")>40?"...":"" ?></td>
-<td><span class="badge-etat <?= $i->statut==="repare"?"etat-ok":($i->statut==="cours"?"etat-pend":"etat-late") ?>"><?= h($i->statut) ?></span></td>
-</tr>
-<?php endforeach; endif; ?>
-</tbody>
-</table>
-</div>
-</div>
+
 </div>
 </div>
 </div>

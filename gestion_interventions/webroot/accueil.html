@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIGIT — Système de Gestion IT</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --or:#C8963E;--or2:#E8B84B;--vert:#1A5C2E;--vert2:#2D8C4E;--rouge:#B22222;
+    --blanc:#FAF8F2;--sombre:#0D1B0F;--gris:#4A4A3A;
+    --or-clair:#F5E6C8;--ombre:rgba(13,27,15,0.7);
+  }
+  html,body{height:100%;overflow:hidden}
+  body{
+    font-family:'Crimson Pro',serif;
+    background:var(--sombre);
+    color:var(--blanc);
+    position:relative;
+  }
+
+  /* Fond animé */
+  .bg-canvas{
+    position:fixed;inset:0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 80%, rgba(26,92,46,0.35) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 20%, rgba(178,34,34,0.15) 0%, transparent 55%),
+      radial-gradient(ellipse 100% 80% at 50% 50%, rgba(13,27,15,0.9) 0%, var(--sombre) 100%);
+  }
+  .bg-pattern{
+    position:fixed;inset:0;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(200,150,62,0.03) 0px, rgba(200,150,62,0.03) 1px, transparent 1px, transparent 60px),
+      repeating-linear-gradient(-45deg, rgba(200,150,62,0.03) 0px, rgba(200,150,62,0.03) 1px, transparent 1px, transparent 60px);
+    animation:patternMove 20s linear infinite;
+  }
+  @keyframes patternMove{from{background-position:0 0}to{background-position:60px 60px}}
+
+  /* Particules */
+  .particle{
+    position:fixed;border-radius:50%;pointer-events:none;
+    animation:float linear infinite;
+  }
+  @keyframes float{
+    0%{transform:translateY(100vh) rotate(0deg);opacity:0}
+    10%{opacity:1}90%{opacity:1}
+    100%{transform:translateY(-100px) rotate(720deg);opacity:0}
+  }
+
+  /* Layout principal */
+  .page{
+    position:relative;z-index:10;
+    height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:space-between;
+    padding:2rem 1rem 2.5rem;
+  }
+
+  /* Header avec logos */
+  .header{
+    width:100%;display:flex;align-items:center;justify-content:center;
+    gap:2rem;padding:0 2rem;
+  }
+  .logo-box{
+    display:flex;flex-direction:column;align-items:center;gap:0.3rem;
+  }
+  .logo-svg{
+    width:70px;height:70px;filter:drop-shadow(0 0 12px rgba(200,150,62,0.4));
+    transition:filter 0.3s;
+  }
+  .logo-box:hover .logo-svg{filter:drop-shadow(0 0 20px rgba(200,150,62,0.7))}
+  .logo-label{
+    font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.15em;
+    color:var(--or);text-align:center;text-transform:uppercase;
+  }
+
+  .divider-v{
+    width:1px;height:80px;
+    background:linear-gradient(to bottom, transparent, var(--or), transparent);
+    opacity:0.5;
+  }
+
+  /* Titre central */
+  .hero{
+    text-align:center;flex:1;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:1rem;
+  }
+  .badge{
+    display:inline-flex;align-items:center;gap:0.5rem;
+    border:1px solid rgba(200,150,62,0.4);border-radius:20px;
+    padding:0.3rem 1rem;font-size:0.75rem;letter-spacing:0.2em;
+    color:var(--or);text-transform:uppercase;
+    background:rgba(200,150,62,0.05);
+    animation:pulse 3s ease-in-out infinite;
+  }
+  .badge::before,.badge::after{content:'◆';font-size:0.5rem;color:var(--or2)}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(200,150,62,0)}50%{box-shadow:0 0 0 4px rgba(200,150,62,0.1)}}
+
+  h1{
+    font-family:'Cinzel',serif;font-size:clamp(2rem,5vw,3.5rem);
+    font-weight:700;line-height:1.1;
+    background:linear-gradient(135deg, var(--or2) 0%, var(--blanc) 50%, var(--or) 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    background-clip:text;
+    text-shadow:none;
+    animation:titleReveal 1.2s ease forwards;
+    opacity:0;
+  }
+  @keyframes titleReveal{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .subtitle{
+    font-size:clamp(0.85rem,2vw,1.1rem);color:rgba(250,248,242,0.65);
+    letter-spacing:0.08em;font-style:italic;
+    animation:titleReveal 1.2s 0.3s ease forwards;opacity:0;
+    max-width:500px;line-height:1.6;
+  }
+  .ministere-name{
+    font-family:'Cinzel',serif;font-size:clamp(0.7rem,1.5vw,0.9rem);
+    color:var(--or);letter-spacing:0.12em;text-transform:uppercase;
+    animation:titleReveal 1.2s 0.5s ease forwards;opacity:0;
+  }
+
+  /* Ligne décorative */
+  .ornament{
+    display:flex;align-items:center;gap:1rem;
+    animation:titleReveal 1.2s 0.6s ease forwards;opacity:0;
+  }
+  .ornament-line{width:80px;height:1px;background:linear-gradient(to right,transparent,var(--or))}
+  .ornament-line.rev{background:linear-gradient(to left,transparent,var(--or))}
+  .ornament-diamond{color:var(--or);font-size:0.6rem}
+
+  /* Boutons circulaires */
+  .buttons-ring{
+    display:flex;align-items:center;justify-content:center;
+    gap:3rem;
+    animation:titleReveal 1.2s 0.8s ease forwards;opacity:0;
+  }
+  .btn-circle{
+    position:relative;width:110px;height:110px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:0.5rem;cursor:pointer;text-decoration:none;
+    border:none;background:none;
+  }
+  .btn-circle-inner{
+    position:absolute;inset:0;border-radius:50%;
+    border:1.5px solid rgba(200,150,62,0.3);
+    background:radial-gradient(ellipse at center, rgba(200,150,62,0.08) 0%, transparent 70%);
+    transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .btn-circle-ring{
+    position:absolute;inset:-6px;border-radius:50%;
+    border:1px solid rgba(200,150,62,0.15);
+    transition:all 0.4s;
+  }
+  .btn-circle:hover .btn-circle-inner{
+    background:radial-gradient(ellipse at center, rgba(200,150,62,0.2) 0%, rgba(200,150,62,0.05) 70%);
+    border-color:var(--or);
+    box-shadow:0 0 30px rgba(200,150,62,0.3), inset 0 0 20px rgba(200,150,62,0.1);
+    transform:scale(1.05);
+  }
+  .btn-circle:hover .btn-circle-ring{
+    border-color:rgba(200,150,62,0.4);
+    transform:scale(1.1) rotate(45deg);
+  }
+  .btn-icon{
+    position:relative;font-size:1.8rem;
+    filter:drop-shadow(0 0 8px rgba(200,150,62,0.3));
+    transition:transform 0.3s;
+  }
+  .btn-circle:hover .btn-icon{transform:scale(1.15)}
+  .btn-label{
+    position:relative;font-family:'Cinzel',serif;
+    font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;
+    color:var(--or);transition:color 0.3s;
+  }
+  .btn-circle:hover .btn-label{color:var(--or2)}
+
+  /* Animation pour chaque bouton */
+  .btn-circle:nth-child(1){animation-delay:0.9s}
+  .btn-circle:nth-child(2){animation-delay:1s}
+  .btn-circle:nth-child(3){animation-delay:1.1s}
+  .btn-circle:nth-child(4){animation-delay:1.2s}
+
+  /* Scan line animé */
+  .scan-line{
+    position:fixed;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(to right, transparent, rgba(200,150,62,0.4), transparent);
+    animation:scan 8s linear infinite;pointer-events:none;z-index:5;
+  }
+  @keyframes scan{from{top:-2px}to{top:100%}}
+
+  /* Footer */
+  .footer{
+    display:flex;align-items:center;gap:1rem;
+    font-size:0.65rem;letter-spacing:0.1em;color:rgba(250,248,242,0.3);
+    text-transform:uppercase;
+  }
+  .footer-dot{width:3px;height:3px;border-radius:50%;background:var(--or);opacity:0.5}
+
+  /* =========== PAGE LOGIN =========== */
+  .overlay{
+    position:fixed;inset:0;z-index:100;
+    background:rgba(13,27,15,0.97);
+    display:none;align-items:center;justify-content:center;
+    backdrop-filter:blur(8px);
+  }
+  .overlay.active{display:flex}
+  .login-panel{
+    background:linear-gradient(135deg, rgba(26,92,46,0.12) 0%, rgba(13,27,15,0.9) 100%);
+    border:1px solid rgba(200,150,62,0.25);
+    border-radius:16px;padding:3rem 2.5rem;width:min(420px,90vw);
+    position:relative;
+    box-shadow:0 0 60px rgba(200,150,62,0.1), 0 0 120px rgba(26,92,46,0.1);
+    animation:panelIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+  @keyframes panelIn{from{opacity:0;transform:scale(0.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+  .login-close{
+    position:absolute;top:1rem;right:1rem;
+    background:none;border:none;color:rgba(250,248,242,0.4);
+    font-size:1.2rem;cursor:pointer;
+    width:32px;height:32px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    transition:all 0.2s;
+  }
+  .login-close:hover{color:var(--blanc);background:rgba(200,150,62,0.1)}
+  .login-logo{text-align:center;margin-bottom:1.5rem}
+  .login-logo h2{font-family:'Cinzel',serif;font-size:1.3rem;color:var(--or);letter-spacing:0.1em}
+  .login-logo p{font-size:0.75rem;color:rgba(250,248,242,0.5);margin-top:0.25rem;font-style:italic}
+  .login-divider{
+    display:flex;align-items:center;gap:0.75rem;margin:1rem 0;
+  }
+  .login-divider::before,.login-divider::after{
+    content:'';flex:1;height:1px;
+    background:linear-gradient(to right, transparent, rgba(200,150,62,0.3), transparent);
+  }
+  .login-divider span{font-size:0.6rem;color:var(--or);letter-spacing:0.2em;text-transform:uppercase}
+
+  .form-group{margin-bottom:1.2rem;position:relative}
+  .form-group label{
+    display:block;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;
+    color:var(--or);margin-bottom:0.5rem;font-family:'Cinzel',serif;
+  }
+  .form-group input{
+    width:100%;background:rgba(250,248,242,0.04);
+    border:1px solid rgba(200,150,62,0.2);border-radius:8px;
+    padding:0.75rem 1rem;color:var(--blanc);font-size:0.9rem;
+    font-family:'Crimson Pro',serif;outline:none;
+    transition:all 0.3s;
+  }
+  .form-group input:focus{
+    border-color:var(--or);
+    background:rgba(200,150,62,0.05);
+    box-shadow:0 0 0 3px rgba(200,150,62,0.1);
+  }
+  .form-group input::placeholder{color:rgba(250,248,242,0.2)}
+
+  .btn-login{
+    width:100%;padding:0.9rem;
+    background:linear-gradient(135deg, var(--vert2) 0%, var(--vert) 100%);
+    border:1px solid rgba(200,150,62,0.3);border-radius:8px;
+    color:var(--blanc);font-family:'Cinzel',serif;
+    font-size:0.85rem;letter-spacing:0.15em;text-transform:uppercase;
+    cursor:pointer;transition:all 0.3s;margin-top:0.5rem;
+  }
+  .btn-login:hover{
+    background:linear-gradient(135deg, #3DA55E 0%, var(--vert2) 100%);
+    box-shadow:0 0 20px rgba(45,140,78,0.3);transform:translateY(-1px);
+  }
+  .login-links{
+    display:flex;justify-content:space-between;margin-top:1rem;
+  }
+  .login-links a{
+    font-size:0.75rem;color:rgba(250,248,242,0.45);
+    text-decoration:none;transition:color 0.2s;letter-spacing:0.05em;
+  }
+  .login-links a:hover{color:var(--or)}
+  .btn-s-inscrire{
+    width:100%;padding:0.75rem;margin-top:0.75rem;
+    background:transparent;
+    border:1px solid rgba(200,150,62,0.25);border-radius:8px;
+    color:rgba(250,248,242,0.6);font-family:'Cinzel',serif;
+    font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;
+    cursor:pointer;transition:all 0.3s;
+  }
+  .btn-s-inscrire:hover{border-color:var(--or);color:var(--or);background:rgba(200,150,62,0.05)}
+
+  /* PAGE A PROPOS */
+  .apropos-panel{
+    background:linear-gradient(135deg, rgba(26,92,46,0.12) 0%, rgba(13,27,15,0.9) 100%);
+    border:1px solid rgba(200,150,62,0.25);
+    border-radius:16px;padding:2.5rem;width:min(560px,90vw);
+    position:relative;
+    box-shadow:0 0 60px rgba(200,150,62,0.1);
+    animation:panelIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    max-height:85vh;overflow-y:auto;
+  }
+  .apropos-panel h2{font-family:'Cinzel',serif;font-size:1.2rem;color:var(--or);margin-bottom:0.5rem}
+  .apropos-panel p{font-size:0.95rem;line-height:1.7;color:rgba(250,248,242,0.75);margin-bottom:1rem}
+  .feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1rem}
+  .feature-item{
+    background:rgba(200,150,62,0.05);border:1px solid rgba(200,150,62,0.15);
+    border-radius:8px;padding:0.75rem;
+  }
+  .feature-item .fi-icon{font-size:1.2rem;margin-bottom:0.25rem}
+  .feature-item .fi-label{font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.1em;color:var(--or);text-transform:uppercase}
+  .feature-item .fi-desc{font-size:0.8rem;color:rgba(250,248,242,0.55);margin-top:0.2rem;font-style:italic}
+
+  /* PAGE PARAMETRE */
+  .param-panel{
+    background:linear-gradient(135deg, rgba(26,92,46,0.12) 0%, rgba(13,27,15,0.9) 100%);
+    border:1px solid rgba(200,150,62,0.25);
+    border-radius:16px;padding:2.5rem;width:min(480px,90vw);
+    position:relative;box-shadow:0 0 60px rgba(200,150,62,0.1);
+    animation:panelIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+  .param-panel h2{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--or);margin-bottom:1.5rem}
+  .param-row{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0.75rem 0;border-bottom:1px solid rgba(200,150,62,0.1);
+  }
+  .param-row:last-child{border-bottom:none}
+  .param-row .pr-label{font-size:0.85rem;color:rgba(250,248,242,0.7);letter-spacing:0.05em}
+  .param-row .pr-val{
+    font-size:0.75rem;color:var(--or);font-family:'Cinzel',serif;
+    letter-spacing:0.1em;text-transform:uppercase;
+    background:rgba(200,150,62,0.08);border:1px solid rgba(200,150,62,0.2);
+    border-radius:4px;padding:0.25rem 0.6rem;
+  }
+
+  /* PAGE AIDE */
+  .aide-panel{
+    background:linear-gradient(135deg, rgba(26,92,46,0.12) 0%, rgba(13,27,15,0.9) 100%);
+    border:1px solid rgba(200,150,62,0.25);
+    border-radius:16px;padding:2.5rem;width:min(520px,90vw);
+    position:relative;box-shadow:0 0 60px rgba(200,150,62,0.1);
+    animation:panelIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    max-height:80vh;overflow-y:auto;
+  }
+  .aide-panel h2{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--or);margin-bottom:1.5rem}
+  .aide-q{
+    padding:0.9rem;background:rgba(200,150,62,0.04);
+    border:1px solid rgba(200,150,62,0.1);border-radius:8px;margin-bottom:0.75rem;
+    cursor:pointer;transition:border-color 0.2s;
+  }
+  .aide-q:hover{border-color:rgba(200,150,62,0.3)}
+  .aide-q .aq-q{font-family:'Cinzel',serif;font-size:0.78rem;color:var(--or);letter-spacing:0.05em}
+  .aide-q .aq-a{font-size:0.82rem;color:rgba(250,248,242,0.6);margin-top:0.4rem;line-height:1.5;font-style:italic}
+
+  /* Scrollbar */
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-thumb{background:rgba(200,150,62,0.3);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div class="bg-canvas"></div>
+<div class="bg-pattern"></div>
+<div class="scan-line"></div>
+
+<!-- Particules flottantes -->
+<script>
+  (function(){
+    const colors=['rgba(200,150,62,','rgba(45,140,78,','rgba(178,34,34,'];
+    for(let i=0;i<18;i++){
+      const p=document.createElement('div');
+      p.className='particle';
+      const s=Math.random()*4+2;
+      const c=colors[Math.floor(Math.random()*colors.length)];
+      p.style.cssText=`
+        width:${s}px;height:${s}px;left:${Math.random()*100}%;
+        background:${c}${Math.random()*0.4+0.1});
+        animation-duration:${Math.random()*15+10}s;
+        animation-delay:${Math.random()*10}s;
+      `;
+      document.body.appendChild(p);
+    }
+  })();
+</script>
+
+<div class="page">
+
+  <!-- Header logos -->
+  <div class="header">
+    <div class="logo-box">
+      <!-- Logo Repoblikan'i Madagasikara -->
+      <svg class="logo-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="60" cy="60" r="58" fill="none" stroke="#C8963E" stroke-width="2"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="#C8963E" stroke-width="0.5" stroke-dasharray="3,4"/>
+        <!-- Silhouette Madagascar stylisée -->
+        <ellipse cx="60" cy="55" rx="16" ry="26" fill="none" stroke="#C8963E" stroke-width="2"/>
+        <path d="M56 40 Q52 55 54 72 Q58 80 62 75 Q68 68 66 55 Q64 44 60 38 Z" fill="#C8963E" opacity="0.6"/>
+        <!-- Étoile -->
+        <polygon points="60,18 62,24 68,24 63,27 65,33 60,30 55,33 57,27 52,24 58,24" fill="#C8963E"/>
+        <!-- Texte -->
+        <text x="60" y="100" text-anchor="middle" font-size="6" fill="#C8963E" font-family="serif" letter-spacing="0.5">REPOBLIKAN'I</text>
+        <text x="60" y="108" text-anchor="middle" font-size="6" fill="#C8963E" font-family="serif" letter-spacing="0.5">MADAGASIKARA</text>
+      </svg>
+      <div class="logo-label">République de<br>Madagascar</div>
+    </div>
+
+    <div class="divider-v"></div>
+
+    <div class="logo-box">
+      <svg class="logo-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="60" cy="60" r="58" fill="none" stroke="#2D8C4E" stroke-width="2"/>
+        <circle cx="60" cy="60" r="48" fill="rgba(45,140,78,0.08)"/>
+        <!-- Symbole Ministère: circuit/ordinateur -->
+        <rect x="32" y="38" width="56" height="36" rx="4" fill="none" stroke="#2D8C4E" stroke-width="2"/>
+        <rect x="38" y="44" width="44" height="24" rx="2" fill="rgba(45,140,78,0.15)" stroke="#2D8C4E" stroke-width="1"/>
+        <!-- Connexions réseau -->
+        <circle cx="46" cy="56" r="4" fill="#C8963E"/>
+        <circle cx="60" cy="50" r="4" fill="#C8963E"/>
+        <circle cx="74" cy="56" r="4" fill="#C8963E"/>
+        <circle cx="60" cy="62" r="4" fill="#2D8C4E"/>
+        <line x1="46" y1="56" x2="60" y2="50" stroke="#C8963E" stroke-width="1.5"/>
+        <line x1="60" y1="50" x2="74" y2="56" stroke="#C8963E" stroke-width="1.5"/>
+        <line x1="46" y1="56" x2="60" y2="62" stroke="#C8963E" stroke-width="1.5"/>
+        <line x1="74" y1="56" x2="60" y2="62" stroke="#C8963E" stroke-width="1.5"/>
+        <!-- Pied écran -->
+        <rect x="52" y="74" width="16" height="4" fill="#2D8C4E"/>
+        <rect x="44" y="78" width="32" height="3" rx="1" fill="#2D8C4E"/>
+        <!-- Texte -->
+        <text x="60" y="98" text-anchor="middle" font-size="5.5" fill="#2D8C4E" font-family="serif" letter-spacing="0.3">MINISTÈRE</text>
+        <text x="60" y="106" text-anchor="middle" font-size="4.5" fill="#2D8C4E" font-family="serif" letter-spacing="0.2">NUM. &amp; COMM.</text>
+      </svg>
+      <div class="logo-label">Ministère du<br>Numérique</div>
+    </div>
+  </div>
+
+  <!-- Héros central -->
+  <div class="hero">
+    <div class="badge">Système d'Information</div>
+    <h1>SIGIT</h1>
+    <div class="ministere-name">Gestion &amp; Suivi des Interventions Informatiques</div>
+    <div class="ornament">
+      <div class="ornament-line"></div>
+      <div class="ornament-diamond">◆</div>
+      <div class="ornament-line rev"></div>
+    </div>
+    <p class="subtitle">
+      Plateforme de supervision des maintenances, réparations et interventions techniques du parc informatique
+    </p>
+  </div>
+
+  <!-- Boutons circulaires -->
+  <div class="buttons-ring">
+
+    <button class="btn-circle" onclick="showPanel('login')">
+      <div class="btn-circle-ring"></div>
+      <div class="btn-circle-inner"></div>
+      <div class="btn-icon">🔐</div>
+      <div class="btn-label">Connexion</div>
+    </button>
+
+    <button class="btn-circle" onclick="showPanel('apropos')">
+      <div class="btn-circle-ring"></div>
+      <div class="btn-circle-inner"></div>
+      <div class="btn-icon">📋</div>
+      <div class="btn-label">À Propos</div>
+    </button>
+
+    <button class="btn-circle" onclick="showPanel('parametre')">
+      <div class="btn-circle-ring"></div>
+      <div class="btn-circle-inner"></div>
+      <div class="btn-icon">⚙️</div>
+      <div class="btn-label">Paramètre</div>
+    </button>
+
+    <button class="btn-circle" onclick="showPanel('aide')">
+      <div class="btn-circle-ring"></div>
+      <div class="btn-circle-inner"></div>
+      <div class="btn-icon">❓</div>
+      <div class="btn-label">Aide</div>
+    </button>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>SIGIT v1.0</span>
+    <div class="footer-dot"></div>
+    <span>République de Madagascar</span>
+    <div class="footer-dot"></div>
+    <span>2025 — Confidentiel</span>
+  </div>
+
+</div>
+
+<!-- ========== OVERLAY LOGIN ========== -->
+<div class="overlay" id="ov-login" onclick="closeIfBackdrop(event,'ov-login')">
+  <div class="login-panel">
+    <button class="login-close" onclick="closePanel('ov-login')">✕</button>
+    <div class="login-logo">
+      <h2>◆ SIGIT ◆</h2>
+      <p>Authentification sécurisée</p>
+    </div>
+    <div class="login-divider"><span>Connexion</span></div>
+    <div class="form-group">
+      <label>Identifiant</label>
+      <input type="text" placeholder="Votre nom d'utilisateur">
+    </div>
+    <div class="form-group">
+      <label>Mot de passe</label>
+      <input type="password" placeholder="••••••••">
+    </div>
+    <button class="btn-login" onclick="goToDashboard()">🔐 Se Connecter</button>
+    <button class="btn-s-inscrire">✦ S'inscrire</button>
+    <div class="login-links">
+      <a href="#">🔑 Mot de passe oublié ?</a>
+      <a href="#" onclick="closePanel('ov-login')">Retour</a>
+    </div>
+  </div>
+</div>
+
+<!-- ========== OVERLAY A PROPOS ========== -->
+<div class="overlay" id="ov-apropos" onclick="closeIfBackdrop(event,'ov-apropos')">
+  <div class="apropos-panel">
+    <button class="login-close" onclick="closePanel('ov-apropos')">✕</button>
+    <h2>◆ À Propos du Projet</h2>
+    <div class="login-divider"><span>SIGIT</span></div>
+    <p>
+      Le <strong style="color:var(--or)">SIGIT</strong> — Système Intégré de Gestion des Interventions Techniques — est une plateforme numérique développée pour le Ministère du Numérique et de la Communication de la République de Madagascar.
+    </p>
+    <p>
+      Cette application permet la traçabilité complète des interventions informatiques, la gestion du parc matériel et le suivi en temps réel des pannes et réparations.
+    </p>
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="fi-icon">🛠️</div>
+        <div class="fi-label">Interventions</div>
+        <div class="fi-desc">Suivi des maintenances et réparations</div>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">📊</div>
+        <div class="fi-label">Statistiques</div>
+        <div class="fi-desc">Tableaux de bord et rapports</div>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">📅</div>
+        <div class="fi-label">Planification</div>
+        <div class="fi-desc">Calendrier des livraisons</div>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">👥</div>
+        <div class="fi-label">Utilisateurs</div>
+        <div class="fi-desc">Gestion des bénéficiaires</div>
+      </div>
+    </div>
+    <p style="margin-top:1rem;font-size:0.8rem;color:rgba(250,248,242,0.4);text-align:center;font-style:italic">
+      Version 1.0 — CakePHP 5.x — © 2025 — Direction des Systèmes d'Information
+    </p>
+  </div>
+</div>
+
+<!-- ========== OVERLAY PARAMETRE ========== -->
+<div class="overlay" id="ov-parametre" onclick="closeIfBackdrop(event,'ov-parametre')">
+  <div class="param-panel">
+    <button class="login-close" onclick="closePanel('ov-parametre')">✕</button>
+    <h2>⚙️ Paramètres Système</h2>
+    <div class="login-divider"><span>Configuration</span></div>
+    <div class="param-row"><span class="pr-label">Version Application</span><span class="pr-val">1.0.0</span></div>
+    <div class="param-row"><span class="pr-label">Framework</span><span class="pr-val">CakePHP 5</span></div>
+    <div class="param-row"><span class="pr-label">Base de données</span><span class="pr-val">MySQL 8</span></div>
+    <div class="param-row"><span class="pr-label">Langue</span><span class="pr-val">Français</span></div>
+    <div class="param-row"><span class="pr-label">Fuseau horaire</span><span class="pr-val">Indian/Antananarivo</span></div>
+    <div class="param-row"><span class="pr-label">Environnement</span><span class="pr-val">Production</span></div>
+    <div class="param-row"><span class="pr-label">Thème</span><span class="pr-val">Officiel MNC</span></div>
+    <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(200,150,62,0.15)">
+      <p style="font-size:0.75rem;color:rgba(250,248,242,0.35);font-style:italic;text-align:center">
+        Paramètres accessibles aux administrateurs uniquement
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ========== OVERLAY AIDE ========== -->
+<div class="overlay" id="ov-aide" onclick="closeIfBackdrop(event,'ov-aide')">
+  <div class="aide-panel">
+    <button class="login-close" onclick="closePanel('ov-aide')">✕</button>
+    <h2>❓ Centre d'Aide</h2>
+    <div class="login-divider"><span>FAQ</span></div>
+    <div class="aide-q">
+      <div class="aq-q">Comment créer une nouvelle intervention ?</div>
+      <div class="aq-a">Accédez au formulaire via le menu "Interventions", remplissez la date, l'observation, le bénéficiaire et le type d'intervention.</div>
+    </div>
+    <div class="aide-q">
+      <div class="aq-q">Comment consulter les statistiques ?</div>
+      <div class="aq-a">Le tableau de bord affiche les statistiques en temps réel sous forme de graphiques circulaires par type d'intervention.</div>
+    </div>
+    <div class="aide-q">
+      <div class="aq-q">Puis-je modifier mon profil ?</div>
+      <div class="aq-a">Oui, cliquez sur votre avatar en haut à droite puis "Modifier le profil" pour changer vos informations.</div>
+    </div>
+    <div class="aide-q">
+      <div class="aq-q">Comment réinitialiser mon mot de passe ?</div>
+      <div class="aq-a">Sur la page de connexion, cliquez sur "Mot de passe oublié" et suivez les instructions envoyées par email.</div>
+    </div>
+    <div class="aide-q">
+      <div class="aq-q">Comment exporter les données ?</div>
+      <div class="aq-a">Dans chaque liste, un bouton d'export CSV/PDF est disponible en haut à droite du tableau.</div>
+    </div>
+    <div style="margin-top:1rem;text-align:center">
+      <p style="font-size:0.75rem;color:rgba(250,248,242,0.35);font-style:italic">
+        Contact technique : dsi@mnc.gov.mg
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showPanel(name){
+    closeAll();
+    document.getElementById('ov-'+name).classList.add('active');
+  }
+  function closePanel(id){
+    document.getElementById(id).classList.remove('active');
+  }
+  function closeAll(){
+    document.querySelectorAll('.overlay').forEach(o=>o.classList.remove('active'));
+  }
+  function closeIfBackdrop(e,id){
+    if(e.target===document.getElementById(id)) closePanel(id);
+  }
+  function goToDashboard(){
+    // Redirection vers dashboard.html (CakePHP: /interventions/index)
+    alert('✅ Connexion réussie!\n\nRedirection vers le tableau de bord...\n\n(En production: /dashboard)');
+  }
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
+</script>
+</body>
+</html>

@@ -44,8 +44,8 @@
   </div>
 </div>
 
-<div id="ov-login" onclick="if(event.target===this)closeOv()" style="position:fixed;inset:0;background:rgba(13,27,15,0.97);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(8px)">
-  <div style="background:linear-gradient(135deg,rgba(26,92,46,0.12),rgba(13,27,15,0.9));border:1px solid rgba(200,150,62,0.25);border-radius:16px;padding:2.5rem;width:min(420px,90vw);position:relative;max-height:90vh;overflow-y:auto">
+<div id="ov-login" onclick="if(event.target===this)closeOv()" style="position:fixed;inset:0;background:rgba(10,6,0,0.97);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(8px)">
+  <div style="background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(10,6,0,0.97));border:1px solid rgba(200,150,62,0.25);border-radius:16px;padding:2.5rem;width:min(420px,90vw);position:relative;max-height:90vh;overflow-y:auto">
     <button onclick="closeOv()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(250,248,242,0.4);font-size:1.2rem;cursor:pointer">&#10005;</button>
     <div style="text-align:center;margin-bottom:1.5rem">
       <h2 style="color:var(--or);letter-spacing:0.1em">&#9670; SIGIT &#9670;</h2>
@@ -55,16 +55,16 @@
     <form action="/users/login" method="post">
       <div class="form-group"><label>Email</label><input type="email" name="email" placeholder="votre@email.mg" required></div>
       <div class="form-group"><label>Mot de passe</label><input type="password" name="password" placeholder="........" required></div>
-      <input type="submit" value="Se Connecter" class="btn-login">
+      <input type="submit" value="Se Connecter" class="btn-login" style="background:linear-gradient(135deg,#1a5c2e,#2D8C4E,#4caf50) !important;color:#ffffff !important;border:2px solid rgba(45,140,78,0.8) !important;font-weight:800 !important;box-shadow:0 4px 20px rgba(45,140,78,0.55) !important">
     </form>
     <div style="margin-top:1rem">
-      <button class="btn-inscrire" onclick="showOv('inscrire')">&#10010; S inscrire</button>
+      <button class="btn-inscrire" style="background:linear-gradient(135deg,#1a5c2e,#2D8C4E,#4caf50) !important;color:#ffffff !important;border:2px solid rgba(45,140,78,0.7) !important;font-weight:800 !important;box-shadow:0 4px 20px rgba(45,140,78,0.45) !important" onclick="showOv('inscrire')">&#10010; S inscrire</button>
     </div>
   </div>
 </div>
 
-<div id="ov-inscrire" onclick="if(event.target===this)closeOv()" style="position:fixed;inset:0;background:rgba(13,27,15,0.97);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(8px)">
-  <div style="background:linear-gradient(135deg,rgba(26,92,46,0.12),rgba(13,27,15,0.9));border:1px solid rgba(200,150,62,0.25);border-radius:16px;padding:2.5rem;width:min(420px,90vw);position:relative;max-height:90vh;overflow-y:auto">
+<div id="ov-inscrire" onclick="if(event.target===this)closeOv()" style="position:fixed;inset:0;background:rgba(10,6,0,0.97);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(8px)">
+  <div style="background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(10,6,0,0.97));border:1px solid rgba(200,150,62,0.25);border-radius:16px;padding:2.5rem;width:min(420px,90vw);position:relative;max-height:90vh;overflow-y:auto">
     <button onclick="closeOv()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(250,248,242,0.4);font-size:1.2rem;cursor:pointer">&#10005;</button>
     <div style="text-align:center;margin-bottom:1.5rem">
       <h2 style="color:var(--or)">&#9670; SIGIT &#9670;</h2>
@@ -76,7 +76,7 @@
       <div class="form-group"><label>Prenom</label><input type="text" name="prenom" placeholder="Votre prenom"></div>
       <div class="form-group"><label>Email *</label><input type="email" name="email" placeholder="votre@email.mg" required></div>
       <div class="form-group"><label>Mot de passe *</label><input type="password" name="password" placeholder="........" required></div>
-      <input type="submit" value="S inscrire" class="btn-login">
+      <input type="submit" value="S inscrire" class="btn-login" style="background:linear-gradient(135deg,#1a5c2e,#2D8C4E,#4caf50) !important;color:#ffffff !important;border:2px solid rgba(45,140,78,0.8) !important;font-weight:800 !important;box-shadow:0 4px 20px rgba(45,140,78,0.55) !important">
     </form>
     <div style="margin-top:1rem;text-align:center">
       <a onclick="showOv('login')" style="cursor:pointer;font-size:0.75rem;color:rgba(250,248,242,0.45)">Deja un compte ? Se connecter</a>
@@ -84,12 +84,12 @@
   </div>
 </div>
 
-<div id="ov-apropos" onclick="if(event.target===this)closeOv()" style="position:fixed;inset:0;background:rgba(13,27,15,0.97);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(8px)">
-  <div style="background:linear-gradient(135deg,rgba(26,92,46,0.12),rgba(13,27,15,0.9));border:1px solid rgba(200,150,62,0.25);border-radius:16px;padding:2.5rem;width:min(540px,90vw);position:relative">
+<div id="ov-apropos" onclick="if(event.target===this)closeOv()" style="position:fixed;inset:0;background:rgba(10,6,0,0.97);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(8px)">
+  <div style="background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(10,6,0,0.97));border:1px solid rgba(200,150,62,0.25);border-radius:16px;padding:2.5rem;width:min(540px,90vw);position:relative">
     <button onclick="closeOv()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(250,248,242,0.4);font-size:1.2rem;cursor:pointer">&#10005;</button>
     <p class="panel-title-h">&#9670; A Propos du Projet</p>
     <div class="divider-line"><span>SIGIT</span></div>
-    <p style="font-size:0.95rem;line-height:1.7;color:rgba(250,248,242,0.75);margin-bottom:1rem">Le SIGIT est une plateforme numerique developpee pour le Ministere du Numerique et de la Communication de la Republique de Madagascar.</p>
+    <p style="font-size:0.95rem;line-height:1.7;color:rgba(250,248,242,0.75);margin-bottom:1rem">Le SIGIT est une plateforme numerique developpee pour le Ministere du Commerce et de la Consommation et de la Communication de la Republique de Madagascar.</p>
     <div class="feature-grid">
       <div class="fi"><div class="fi-icon">&#128736;</div><div class="fi-label">Interventions</div><div class="fi-desc">Suivi des maintenances</div></div>
       <div class="fi"><div class="fi-icon">&#128202;</div><div class="fi-label">Statistiques</div><div class="fi-desc">Tableaux de bord</div></div>
@@ -99,8 +99,8 @@
   </div>
 </div>
 
-<div id="ov-parametre" onclick="if(event.target===this)closeOv()" style="position:fixed;inset:0;background:rgba(13,27,15,0.97);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(8px)">
-  <div style="background:linear-gradient(135deg,rgba(26,92,46,0.12),rgba(13,27,15,0.9));border:1px solid rgba(200,150,62,0.25);border-radius:16px;padding:2.5rem;width:min(460px,90vw);position:relative">
+<div id="ov-parametre" onclick="if(event.target===this)closeOv()" style="position:fixed;inset:0;background:rgba(10,6,0,0.97);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(8px)">
+  <div style="background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(10,6,0,0.97));border:1px solid rgba(200,150,62,0.25);border-radius:16px;padding:2.5rem;width:min(460px,90vw);position:relative">
     <button onclick="closeOv()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(250,248,242,0.4);font-size:1.2rem;cursor:pointer">&#10005;</button>
     <p class="panel-title-h">&#9881; Parametres Systeme</p>
     <div class="divider-line"><span>Configuration</span></div>
@@ -112,8 +112,8 @@
   </div>
 </div>
 
-<div id="ov-aide" onclick="if(event.target===this)closeOv()" style="position:fixed;inset:0;background:rgba(13,27,15,0.97);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(8px)">
-  <div style="background:linear-gradient(135deg,rgba(26,92,46,0.12),rgba(13,27,15,0.9));border:1px solid rgba(200,150,62,0.25);border-radius:16px;padding:2.5rem;width:min(480px,90vw);position:relative">
+<div id="ov-aide" onclick="if(event.target===this)closeOv()" style="position:fixed;inset:0;background:rgba(10,6,0,0.97);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(8px)">
+  <div style="background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(10,6,0,0.97));border:1px solid rgba(200,150,62,0.25);border-radius:16px;padding:2.5rem;width:min(480px,90vw);position:relative">
     <button onclick="closeOv()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(250,248,242,0.4);font-size:1.2rem;cursor:pointer">&#10005;</button>
     <p class="panel-title-h">&#10067; Centre d Aide</p>
     <div class="divider-line"><span>FAQ</span></div>

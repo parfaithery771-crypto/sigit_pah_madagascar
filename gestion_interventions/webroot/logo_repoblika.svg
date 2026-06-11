@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <circle cx="60" cy="60" r="58" fill="#1A5C2E" stroke="#D4AF37" stroke-width="3"/>
+  <circle cx="60" cy="60" r="48" fill="#C8102E"/>
+  <ellipse cx="60" cy="52" rx="20" ry="24" fill="#D4AF37"/>
+  <path d="M40 68 Q60 82 80 68" fill="none" stroke="#D4AF37" stroke-width="3"/>
+  <path d="M46 44 L60 32 L74 44 L70 56 L50 56Z" fill="#1A5C2E"/>
+  <text x="60" y="108" text-anchor="middle" fill="#D4AF37" font-size="7" font-family="serif">REPOBLIKAN I MADAGASIKARA</text>
+</svg>

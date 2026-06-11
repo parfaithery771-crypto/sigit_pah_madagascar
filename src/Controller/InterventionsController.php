@@ -22,12 +22,13 @@ class InterventionsController extends AppController
             $session = $this->request->getSession();
             $Interventions = $this->getTableLocator()->get('Interventions');
             $intervention = $Interventions->newEntity([
-                'date_intervention' => $data['date_intervention'],
-                'observation'       => $data['observation'] ?? '',
-                'beneficiaire'      => $data['beneficiaire'],
-                'type_intervention' => $data['type_intervention'],
-                'statut'            => $data['statut'] ?? 'cours',
-                'user_id'           => $session->read('Auth.id'),
+                'date_intervention'   => $data['date_intervention'],
+                'observation'         => $data['observation'] ?? '',
+                'description_travaux' => $data['description_travaux'] ?? '',
+                'beneficiaire'        => $data['beneficiaire'],
+                'type_intervention'   => $data['type_intervention'],
+                'statut'              => $data['statut'] ?? 'cours',
+                'user_id'             => $session->read('Auth.id'),
             ]);
             if ($Interventions->save($intervention)) {
                 $this->Flash->success('Intervention ajoutee avec succes.');
@@ -47,11 +48,12 @@ class InterventionsController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $data = $this->request->getData();
             $intervention = $Interventions->patchEntity($intervention, [
-                'date_intervention' => $data['date_intervention'],
-                'observation'       => $data['observation'] ?? '',
-                'beneficiaire'      => $data['beneficiaire'],
-                'type_intervention' => $data['type_intervention'],
-                'statut'            => $data['statut'],
+                'date_intervention'   => $data['date_intervention'],
+                'observation'         => $data['observation'] ?? '',
+                'description_travaux' => $data['description_travaux'] ?? '',
+                'beneficiaire'        => $data['beneficiaire'],
+                'type_intervention'   => $data['type_intervention'],
+                'statut'              => $data['statut'],
             ]);
             if ($Interventions->save($intervention)) {
                 $this->Flash->success('Intervention modifiee.');

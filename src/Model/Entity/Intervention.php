@@ -4,8 +4,14 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 class Intervention extends Entity {
     protected array $_accessible = [
-        "date_intervention"=>true,"observation"=>true,"beneficiaire"=>true,
-        "type_intervention"=>true,"statut"=>true,"user_id"=>true,
-        "created"=>true,"modified"=>true
+        "date_intervention"   => true,
+        "observation"         => true,
+        "description_travaux" => true,
+        "beneficiaire"        => true,
+        "type_intervention"   => true,
+        "statut"              => true,
+        "user_id"             => true,
+        "created"             => true,
+        "modified"            => true
     ];
 }

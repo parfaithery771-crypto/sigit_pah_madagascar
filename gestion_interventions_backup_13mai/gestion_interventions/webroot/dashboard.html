@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIGIT — Tableau de Bord</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --or:#C8963E;--or2:#E8B84B;--vert:#1A5C2E;--vert2:#2D8C4E;--rouge:#B22222;
+  --blanc:#FAF8F2;--sombre:#0D1B0F;--gris:#4A4A3A;
+  --bg:#0F1E12;--surface:rgba(20,40,24,0.95);--border:rgba(200,150,62,0.2);
+  --text:rgba(250,248,242,0.85);--text-muted:rgba(250,248,242,0.45);
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Crimson Pro',serif}
+a{text-decoration:none;color:inherit}
+
+/* =================== LAYOUT =================== */
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* Sidebar */
+.sidebar{
+  width:240px;min-width:240px;background:rgba(13,27,15,0.98);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  padding:0;overflow:hidden;
+  position:relative;
+}
+.sidebar::after{
+  content:'';position:absolute;top:0;right:0;bottom:0;width:1px;
+  background:linear-gradient(to bottom,transparent,var(--or),transparent);
+  opacity:0.3;
+}
+.sidebar-header{
+  padding:1.5rem 1.25rem 1rem;border-bottom:1px solid var(--border);
+}
+.sidebar-logo{font-family:'Cinzel',serif;font-size:1.2rem;color:var(--or);letter-spacing:0.1em}
+.sidebar-sub{font-size:0.65rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px}
+
+.nav{flex:1;padding:1rem 0;overflow-y:auto}
+.nav-section{padding:0.5rem 1.25rem 0.25rem;font-size:0.6rem;letter-spacing:0.2em;
+  text-transform:uppercase;color:rgba(200,150,62,0.5);font-family:'Cinzel',serif}
+.nav-item{
+  display:flex;align-items:center;gap:0.75rem;
+  padding:0.65rem 1.25rem;cursor:pointer;
+  transition:all 0.2s;font-size:0.88rem;
+  border-left:2px solid transparent;
+  position:relative;
+}
+.nav-item:hover,.nav-item.active{
+  background:rgba(200,150,62,0.07);
+  border-left-color:var(--or);color:var(--or);
+}
+.nav-item .ni{font-size:1rem;width:20px;text-align:center}
+
+.sidebar-user{
+  padding:1rem 1.25rem;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:0.75rem;
+}
+.user-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--vert2),var(--vert));
+  border:1.5px solid var(--or);display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-size:0.75rem;color:var(--or);cursor:pointer;
+  flex-shrink:0;transition:box-shadow 0.2s;
+}
+.user-avatar:hover{box-shadow:0 0 12px rgba(200,150,62,0.4)}
+.user-info{flex:1;min-width:0}
+.user-name{font-size:0.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:0.65rem;color:var(--text-muted);letter-spacing:0.05em;text-transform:uppercase}
+.btn-deconnect{
+  background:none;border:none;color:var(--text-muted);cursor:pointer;
+  font-size:1rem;transition:color 0.2s;padding:4px;
+}
+.btn-deconnect:hover{color:var(--rouge)}
+
+/* Main content */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* Topbar */
+.topbar{
+  padding:0.85rem 1.5rem;background:rgba(13,27,15,0.95);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.topbar-title{font-family:'Cinzel',serif;font-size:1rem;color:var(--blanc);letter-spacing:0.08em}
+.topbar-actions{display:flex;align-items:center;gap:0.75rem}
+.btn-action{
+  display:flex;align-items:center;gap:0.4rem;
+  padding:0.45rem 0.9rem;border-radius:6px;font-size:0.78rem;
+  font-family:'Cinzel',serif;letter-spacing:0.08em;cursor:pointer;
+  transition:all 0.2s;border:1px solid var(--border);background:transparent;
+  color:var(--text);
+}
+.btn-action:hover{border-color:var(--or);color:var(--or);background:rgba(200,150,62,0.05)}
+.btn-action.primary{background:linear-gradient(135deg,var(--vert2),var(--vert));border-color:rgba(200,150,62,0.3);color:var(--blanc)}
+.btn-action.primary:hover{filter:brightness(1.1);box-shadow:0 0 15px rgba(45,140,78,0.3)}
+
+/* Content area */
+.content{flex:1;overflow-y:auto;padding:1.5rem}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:rgba(200,150,62,0.3);border-radius:2px}
+
+/* Stats cards */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.stat-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:1rem 1.25rem;
+  position:relative;overflow:hidden;cursor:pointer;transition:border-color 0.2s;
+}
+.stat-card:hover{border-color:rgba(200,150,62,0.45)}
+.stat-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(to right,var(--vert),var(--or));
+}
+.stat-label{font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.4rem}
+.stat-value{font-family:'Cinzel',serif;font-size:1.8rem;color:var(--or);line-height:1}
+.stat-sub{font-size:0.75rem;color:var(--text-muted);margin-top:0.3rem;font-style:italic}
+.stat-icon{position:absolute;top:1rem;right:1rem;font-size:1.4rem;opacity:0.4}
+
+/* Grid 2 colonnes */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.grid3{display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+
+/* Panel carte */
+.panel{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;
+}
+.panel-header{
+  padding:0.85rem 1.25rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.panel-title{font-family:'Cinzel',serif;font-size:0.85rem;color:var(--or);letter-spacing:0.08em}
+.panel-body{padding:1.25rem}
+
+/* ============== FORMULAIRE INTERVENTION ============ */
+.form-cols{display:flex;flex-direction:column;gap:0.9rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.9rem}
+.field{display:flex;flex-direction:column;gap:0.35rem}
+.field.full{grid-column:1/-1}
+.field label{
+  font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--or);font-family:'Cinzel',serif;
+}
+.field input,.field select,.field textarea{
+  background:rgba(250,248,242,0.04);border:1px solid rgba(200,150,62,0.2);
+  border-radius:6px;padding:0.6rem 0.85rem;color:var(--text);
+  font-size:0.88rem;font-family:'Crimson Pro',serif;outline:none;
+  transition:all 0.2s;
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--or);background:rgba(200,150,62,0.05);
+  box-shadow:0 0 0 2px rgba(200,150,62,0.1);
+}
+.field select option{background:#1a2e1e;color:var(--text)}
+.field select{cursor:pointer}
+.field textarea{resize:vertical;min-height:70px}
+.field input::placeholder,.field textarea::placeholder{color:rgba(250,248,242,0.2)}
+.btn-submit{
+  padding:0.7rem 1.5rem;
+  background:linear-gradient(135deg,var(--vert2),var(--vert));
+  border:1px solid rgba(200,150,62,0.3);border-radius:6px;
+  color:var(--blanc);font-family:'Cinzel',serif;font-size:0.78rem;
+  letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;
+  transition:all 0.2s;align-self:flex-start;
+}
+.btn-submit:hover{filter:brightness(1.15);box-shadow:0 0 15px rgba(45,140,78,0.3);transform:translateY(-1px)}
+
+/* ============== LISTE LIVRAISON ============ */
+.livraison-list{display:flex;flex-direction:column;gap:0.5rem}
+.livraison-item{
+  display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:0.75rem;
+  padding:0.65rem 0.85rem;border-radius:6px;
+  background:rgba(250,248,242,0.03);border:1px solid rgba(200,150,62,0.1);
+  transition:border-color 0.2s;cursor:pointer;font-size:0.83rem;
+}
+.livraison-item:hover{border-color:rgba(200,150,62,0.3)}
+.liv-day{
+  font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.1em;
+  color:var(--or);text-transform:uppercase;min-width:28px;text-align:center;
+}
+.liv-name{color:var(--text);font-size:0.85rem}
+.liv-direction{font-size:0.75rem;color:var(--text-muted);font-style:italic}
+.badge-etat{
+  font-size:0.65rem;padding:0.2rem 0.5rem;border-radius:4px;
+  font-family:'Cinzel',serif;letter-spacing:0.05em;text-transform:uppercase;white-space:nowrap;
+}
+.etat-ok{background:rgba(45,140,78,0.15);border:1px solid rgba(45,140,78,0.3);color:#5EC878}
+.etat-pend{background:rgba(200,150,62,0.12);border:1px solid rgba(200,150,62,0.25);color:var(--or2)}
+.etat-late{background:rgba(178,34,34,0.12);border:1px solid rgba(178,34,34,0.25);color:#E06060}
+
+/* ============== GRAPHIQUE DONUT ============ */
+.chart-container{display:flex;align-items:center;gap:1.5rem}
+.donut-wrap{position:relative;flex-shrink:0}
+.donut-label{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;
+}
+.donut-label-num{font-family:'Cinzel',serif;font-size:1.4rem;color:var(--blanc)}
+.donut-label-txt{font-size:0.6rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase}
+.chart-legend{flex:1;display:flex;flex-direction:column;gap:0.5rem}
+.legend-item{display:flex;align-items:center;gap:0.6rem;font-size:0.78rem;cursor:pointer;padding:0.2rem 0}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.legend-label{flex:1;color:var(--text)}
+.legend-pct{font-family:'Cinzel',serif;font-size:0.75rem;color:var(--text-muted)}
+
+/* ============== TABLE TYPES INTERVENTION ============ */
+.types-list{display:flex;flex-direction:column;gap:0.6rem}
+.type-item{
+  display:flex;align-items:flex-start;gap:0.75rem;
+  padding:0.7rem 0.85rem;border-radius:6px;
+  background:rgba(250,248,242,0.025);border:1px solid rgba(200,150,62,0.08);
+  transition:border-color 0.2s;
+}
+.type-item:hover{border-color:rgba(200,150,62,0.25)}
+.type-badge{
+  width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;
+}
+.type-text{font-size:0.82rem;color:var(--text);line-height:1.4}
+.type-count{
+  font-family:'Cinzel',serif;font-size:0.9rem;color:var(--or);
+  margin-left:auto;flex-shrink:0;padding-left:0.5rem;
+}
+
+/* Profile modal */
+.modal-overlay{
+  position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.7);
+  display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);
+}
+.modal-overlay.active{display:flex}
+.modal-box{
+  background:rgba(13,27,15,0.98);border:1px solid var(--border);
+  border-radius:12px;padding:2rem;width:min(380px,90vw);
+  animation:pIn 0.3s ease forwards;
+}
+@keyframes pIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
+.modal-title{font-family:'Cinzel',serif;font-size:1rem;color:var(--or);margin-bottom:1.25rem}
+.profile-avatar-lg{
+  width:70px;height:70px;border-radius:50%;
+  background:linear-gradient(135deg,var(--vert2),var(--vert));
+  border:2px solid var(--or);display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-size:1.4rem;color:var(--or);margin:0 auto 1.25rem;
+}
+.profile-info-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0.6rem 0;border-bottom:1px solid rgba(200,150,62,0.1);
+  font-size:0.85rem;
+}
+.profile-info-row:last-child{border-bottom:none}
+.pir-label{color:var(--text-muted)}
+.pir-val{color:var(--blanc);font-weight:600}
+.modal-actions{display:flex;gap:0.75rem;margin-top:1.25rem}
+.btn-modal{
+  flex:1;padding:0.6rem;border-radius:6px;font-family:'Cinzel',serif;
+  font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;
+  border:1px solid var(--border);background:transparent;color:var(--text);
+  transition:all 0.2s;
+}
+.btn-modal:hover{border-color:var(--or);color:var(--or)}
+.btn-modal.danger{border-color:rgba(178,34,34,0.3);color:rgba(224,96,96,0.8)}
+.btn-modal.danger:hover{border-color:var(--rouge);color:var(--rouge);background:rgba(178,34,34,0.05)}
+.modal-close-btn{float:right;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem}
+
+/* Tab active */
+.tab-bar{display:flex;gap:0.5rem;margin-bottom:1rem}
+.tab{
+  padding:0.4rem 0.85rem;border-radius:4px;font-size:0.75rem;font-family:'Cinzel',serif;
+  letter-spacing:0.08em;cursor:pointer;border:1px solid var(--border);
+  background:transparent;color:var(--text-muted);transition:all 0.2s;
+}
+.tab.active,.tab:hover{border-color:var(--or);color:var(--or);background:rgba(200,150,62,0.07)}
+
+/* Notification badge */
+.notif{
+  position:absolute;top:-4px;right:-4px;width:16px;height:16px;
+  background:var(--rouge);border-radius:50%;font-size:0.6rem;
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  font-family:'Cinzel',serif;
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ============ SIDEBAR ============ -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">◆ SIGIT</div>
+    <div class="sidebar-sub">Ministère du Numérique</div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-section">Principal</div>
+    <div class="nav-item active" onclick="switchTab('dashboard',this)">
+      <span class="ni">📊</span>Tableau de Bord
+    </div>
+    <div class="nav-item" onclick="switchTab('interventions',this)">
+      <span class="ni">🛠️</span>Interventions
+    </div>
+    <div class="nav-item" onclick="switchTab('livraison',this)">
+      <span class="ni">📦</span>Liste Livraison
+    </div>
+    <div class="nav-item" onclick="switchTab('statistiques',this)">
+      <span class="ni">📈</span>Statistiques
+    </div>
+
+    <div class="nav-section" style="margin-top:0.75rem">Administration</div>
+    <div class="nav-item">
+      <span class="ni">👥</span>Bénéficiaires
+    </div>
+    <div class="nav-item">
+      <span class="ni">🖥️</span>Parc Matériel
+    </div>
+    <div class="nav-item">
+      <span class="ni">📄</span>Rapports
+    </div>
+    <div class="nav-item">
+      <span class="ni">⚙️</span>Paramètres
+    </div>
+  </nav>
+
+  <div class="sidebar-user">
+    <div class="user-avatar" onclick="openProfile()">AD</div>
+    <div class="user-info">
+      <div class="user-name">Admin SIGIT</div>
+      <div class="user-role">Technicien DSI</div>
+    </div>
+    <button class="btn-deconnect" title="Déconnexion" onclick="window.location='accueil.html'">⏻</button>
+  </div>
+</div>
+
+<!-- ============ MAIN ============ -->
+<div class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-title" id="page-title">📊 Tableau de Bord</div>
+    <div class="topbar-actions">
+      <button class="btn-action" onclick="openProfile()">👤 Profil</button>
+      <button class="btn-action primary" onclick="openNewIntervention()">+ Nouvelle Intervention</button>
+    </div>
+  </div>
+
+  <!-- ===== CONTENU ===== -->
+  <div class="content" id="main-content">
+
+    <!-- ---- TAB: DASHBOARD ---- -->
+    <div id="tab-dashboard">
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon">🛠️</div>
+          <div class="stat-label">Total Interventions</div>
+          <div class="stat-value">247</div>
+          <div class="stat-sub">Ce mois: +34</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-label">Résolues</div>
+          <div class="stat-value">198</div>
+          <div class="stat-sub">Taux: 80.2%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-label">En Cours</div>
+          <div class="stat-value">31</div>
+          <div class="stat-sub">Délai moyen: 2.4j</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-label">Bénéficiaires</div>
+          <div class="stat-value">89</div>
+          <div class="stat-sub">Directions: 12</div>
+        </div>
+      </div>
+
+      <!-- Formulaire + Stats donut -->
+      <div class="grid3">
+
+        <!-- Formulaire Intervention -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">🛠️ Nouvelle Intervention</span>
+          </div>
+          <div class="panel-body">
+            <div class="form-cols">
+              <div class="form-row">
+                <div class="field">
+                  <label>📅 Date</label>
+                  <input type="date" id="f-date">
+                </div>
+                <div class="field">
+                  <label>👤 Bénéficiaire</label>
+                  <select>
+                    <option value="">— Sélectionner —</option>
+                    <option>Direction Générale</option>
+                    <option>Direction Financière</option>
+                    <option>Direction Technique</option>
+                    <option>Direction RH</option>
+                    <option>Direction Juridique</option>
+                    <option>Cabinet du Ministre</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label>🔧 Type d'Intervention</label>
+                <select>
+                  <option value="">— Sélectionner le type —</option>
+                  <option>Résolution de problème et maintenance des matériels informatiques</option>
+                  <option>Installation et configuration de matériels informatiques</option>
+                  <option>Restauration et mise à niveau des logiciels informatiques</option>
+                  <option>Assurer que les périphériques informatiques sont en état de fonctionnement</option>
+                  <option>Supervision et analyse des pannes</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>📝 Observation</label>
+                <textarea placeholder="Décrire l'intervention, l'état du matériel, les actions effectuées..."></textarea>
+              </div>
+              <div style="display:flex;gap:0.75rem;align-items:center">
+                <button class="btn-submit">✅ Enregistrer</button>
+                <button class="btn-submit" style="background:transparent;border:1px solid var(--border);color:var(--text-muted)">Annuler</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Donut Statistiques -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">📈 Répartition</span>
+          </div>
+          <div class="panel-body">
+            <div class="chart-container" style="flex-direction:column;gap:1rem">
+              <div class="donut-wrap">
+                <svg width="140" height="140" viewBox="0 0 140 140">
+                  <!-- Donut segments -->
+                  <!-- Total circumference for r=52: 2*π*52 ≈ 327 -->
+                  <!-- Résolution/maintenance: 35% = 114px -->
+                  <circle cx="70" cy="70" r="52" fill="none" stroke="#E8593C" stroke-width="18"
+                    stroke-dasharray="114 213" stroke-dashoffset="0" transform="rotate(-90 70 70)"/>
+                  <!-- Installation/config: 25% = 82px -->
+                  <circle cx="70" cy="70" r="52" fill="none" stroke="#3B8BD4" stroke-width="18"
+                    stroke-dasharray="82 245" stroke-dashoffset="-114" transform="rotate(-90 70 70)"/>
+                  <!-- Restauration: 20% = 65px -->
+                  <circle cx="70" cy="70" r="52" fill="none" stroke="#2D8C4E" stroke-width="18"
+                    stroke-dasharray="65 262" stroke-dashoffset="-196" transform="rotate(-90 70 70)"/>
+                  <!-- Périphériques: 12% = 39px -->
+                  <circle cx="70" cy="70" r="52" fill="none" stroke="#C8963E" stroke-width="18"
+                    stroke-dasharray="39 288" stroke-dashoffset="-261" transform="rotate(-90 70 70)"/>
+                  <!-- Supervision: 8% = 27px -->
+                  <circle cx="70" cy="70" r="52" fill="none" stroke="#9B59B6" stroke-width="18"
+                    stroke-dasharray="27 300" stroke-dashoffset="-300" transform="rotate(-90 70 70)"/>
+                  <!-- Centre -->
+                  <circle cx="70" cy="70" r="40" fill="rgba(13,27,15,0.95)"/>
+                  <text x="70" y="66" text-anchor="middle" font-family="'Cinzel',serif" font-size="16" fill="#FAF8F2">247</text>
+                  <text x="70" y="80" text-anchor="middle" font-family="'Crimson Pro',serif" font-size="9" fill="rgba(250,248,242,0.45)">total</text>
+                </svg>
+              </div>
+              <div class="chart-legend">
+                <div class="legend-item"><div class="legend-dot" style="background:#E8593C"></div><div class="legend-label">Maintenance</div><div class="legend-pct">35%</div></div>
+                <div class="legend-item"><div class="legend-dot" style="background:#3B8BD4"></div><div class="legend-label">Installation</div><div class="legend-pct">25%</div></div>
+                <div class="legend-item"><div class="legend-dot" style="background:#2D8C4E"></div><div class="legend-label">Restauration</div><div class="legend-pct">20%</div></div>
+                <div class="legend-item"><div class="legend-dot" style="background:#C8963E"></div><div class="legend-label">Périphériques</div><div class="legend-pct">12%</div></div>
+                <div class="legend-item"><div class="legend-dot" style="background:#9B59B6"></div><div class="legend-label">Supervision</div><div class="legend-pct">8%</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Types intervention + Livraison -->
+      <div class="grid2">
+
+        <!-- Types d'Intervention détail -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">🔧 Types d'Intervention</span>
+          </div>
+          <div class="panel-body">
+            <div class="types-list">
+              <div class="type-item">
+                <div class="type-badge" style="background:#E8593C"></div>
+                <div class="type-text">Résolution de problème et maintenance des matériels informatiques</div>
+                <div class="type-count">86</div>
+              </div>
+              <div class="type-item">
+                <div class="type-badge" style="background:#3B8BD4"></div>
+                <div class="type-text">Installation et configuration de matériels informatiques</div>
+                <div class="type-count">62</div>
+              </div>
+              <div class="type-item">
+                <div class="type-badge" style="background:#2D8C4E"></div>
+                <div class="type-text">Restauration et mise à niveau des logiciels informatiques</div>
+                <div class="type-count">49</div>
+              </div>
+              <div class="type-item">
+                <div class="type-badge" style="background:#C8963E"></div>
+                <div class="type-text">Assurer que les périphériques informatiques sont en état de fonctionnement</div>
+                <div class="type-count">30</div>
+              </div>
+              <div class="type-item">
+                <div class="type-badge" style="background:#9B59B6"></div>
+                <div class="type-text">Supervision et analyse des pannes</div>
+                <div class="type-count">20</div>
+              </div>
+            </div>
+            <!-- Badge Cour/Réparé/Réparable -->
+            <div style="display:flex;gap:0.5rem;margin-top:1rem;flex-wrap:wrap">
+              <span style="padding:0.25rem 0.6rem;border-radius:4px;font-size:0.68rem;font-family:'Cinzel',serif;letter-spacing:0.08em;background:rgba(59,139,212,0.15);border:1px solid rgba(59,139,212,0.3);color:#3B8BD4">EN COURS</span>
+              <span style="padding:0.25rem 0.6rem;border-radius:4px;font-size:0.68rem;font-family:'Cinzel',serif;letter-spacing:0.08em;background:rgba(45,140,78,0.15);border:1px solid rgba(45,140,78,0.3);color:#5EC878">RÉPARÉ</span>
+              <span style="padding:0.25rem 0.6rem;border-radius:4px;font-size:0.68rem;font-family:'Cinzel',serif;letter-spacing:0.08em;background:rgba(200,150,62,0.15);border:1px solid rgba(200,150,62,0.3);color:var(--or)">RÉPARABLE</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Liste Livraison -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">📦 Liste de Livraison</span>
+            <span style="font-size:0.65rem;color:var(--text-muted);font-style:italic">Lundi — Vendredi</span>
+          </div>
+          <div class="panel-body">
+            <div class="livraison-list">
+              <div class="livraison-item">
+                <div class="liv-day">Lun</div>
+                <div><div class="liv-name">Serveur HP ProLiant</div><div class="liv-direction">Direction Générale</div></div>
+                <div class="badge-etat etat-ok">Livré</div>
+              </div>
+              <div class="livraison-item">
+                <div class="liv-day">Mar</div>
+                <div><div class="liv-name">Switch Cisco 24P</div><div class="liv-direction">Direction Technique</div></div>
+                <div class="badge-etat etat-pend">En Attente</div>
+              </div>
+              <div class="livraison-item">
+                <div class="liv-day">Mer</div>
+                <div><div class="liv-name">PC Assemblés x5</div><div class="liv-direction">Cabinet Ministre</div></div>
+                <div class="badge-etat etat-ok">Livré</div>
+              </div>
+              <div class="livraison-item">
+                <div class="liv-day">Jeu</div>
+                <div><div class="liv-name">Onduleurs APC</div><div class="liv-direction">Direction Financière</div></div>
+                <div class="badge-etat etat-late">En Retard</div>
+              </div>
+              <div class="livraison-item">
+                <div class="liv-day">Ven</div>
+                <div><div class="liv-name">Imprimantes Laser</div><div class="liv-direction">Direction RH</div></div>
+                <div class="badge-etat etat-pend">Programmé</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /tab-dashboard -->
+
+    <!-- ---- TAB: INTERVENTIONS ---- -->
+    <div id="tab-interventions" style="display:none">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">🛠️ Toutes les Interventions</span>
+          <div style="display:flex;gap:0.5rem">
+            <input style="background:rgba(250,248,242,0.04);border:1px solid var(--border);border-radius:5px;padding:0.35rem 0.7rem;color:var(--text);font-size:0.82rem;outline:none;width:200px" placeholder="🔍 Rechercher...">
+            <button class="btn-action primary">+ Nouvelle</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="tab-bar">
+            <div class="tab active">Toutes (247)</div>
+            <div class="tab">En Cours (31)</div>
+            <div class="tab">Résolues (198)</div>
+            <div class="tab">En Attente (18)</div>
+          </div>
+          <table style="width:100%;border-collapse:collapse;font-size:0.83rem">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border)">
+                <th style="text-align:left;padding:0.5rem;font-family:'Cinzel',serif;font-size:0.65rem;color:var(--or);letter-spacing:0.1em;text-transform:uppercase">Date</th>
+                <th style="text-align:left;padding:0.5rem;font-family:'Cinzel',serif;font-size:0.65rem;color:var(--or);letter-spacing:0.1em;text-transform:uppercase">Bénéficiaire</th>
+                <th style="text-align:left;padding:0.5rem;font-family:'Cinzel',serif;font-size:0.65rem;color:var(--or);letter-spacing:0.1em;text-transform:uppercase">Type</th>
+                <th style="text-align:left;padding:0.5rem;font-family:'Cinzel',serif;font-size:0.65rem;color:var(--or);letter-spacing:0.1em;text-transform:uppercase">État</th>
+                <th style="text-align:left;padding:0.5rem;font-family:'Cinzel',serif;font-size:0.65rem;color:var(--or);letter-spacing:0.1em;text-transform:uppercase">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(200,150,62,0.06)">
+                <td style="padding:0.65rem 0.5rem;color:var(--text-muted)">24/04/2025</td>
+                <td style="padding:0.65rem 0.5rem">Direction Générale</td>
+                <td style="padding:0.65rem 0.5rem;color:var(--text-muted);font-style:italic">Maintenance</td>
+                <td style="padding:0.65rem 0.5rem"><span class="badge-etat etat-ok">Réparé</span></td>
+                <td style="padding:0.65rem 0.5rem"><a style="color:var(--or);font-size:0.8rem;cursor:pointer">✏️ Voir</a></td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(200,150,62,0.06)">
+                <td style="padding:0.65rem 0.5rem;color:var(--text-muted)">23/04/2025</td>
+                <td style="padding:0.65rem 0.5rem">Cabinet Ministre</td>
+                <td style="padding:0.65rem 0.5rem;color:var(--text-muted);font-style:italic">Installation</td>
+                <td style="padding:0.65rem 0.5rem"><span class="badge-etat etat-pend">En Cours</span></td>
+                <td style="padding:0.65rem 0.5rem"><a style="color:var(--or);font-size:0.8rem;cursor:pointer">✏️ Voir</a></td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(200,150,62,0.06)">
+                <td style="padding:0.65rem 0.5rem;color:var(--text-muted)">22/04/2025</td>
+                <td style="padding:0.65rem 0.5rem">Direction Financière</td>
+                <td style="padding:0.65rem 0.5rem;color:var(--text-muted);font-style:italic">Restauration logiciel</td>
+                <td style="padding:0.65rem 0.5rem"><span class="badge-etat etat-late">Réparable</span></td>
+                <td style="padding:0.65rem 0.5rem"><a style="color:var(--or);font-size:0.8rem;cursor:pointer">✏️ Voir</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---- TAB: LIVRAISON ---- -->
+    <div id="tab-livraison" style="display:none">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">📦 Planning de Livraison — Semaine</span>
+          <button class="btn-action">+ Ajouter</button>
+        </div>
+        <div class="panel-body">
+          <div class="livraison-list">
+            <div class="livraison-item" style="grid-template-columns:60px 1fr auto auto">
+              <div class="liv-day" style="font-size:0.8rem">Lundi</div>
+              <div><div class="liv-name">Serveur HP ProLiant DL380</div><div class="liv-direction">Direction Générale des Systèmes</div></div>
+              <div class="badge-etat etat-ok">Livré</div>
+            </div>
+            <div class="livraison-item" style="grid-template-columns:60px 1fr auto auto">
+              <div class="liv-day" style="font-size:0.8rem">Mardi</div>
+              <div><div class="liv-name">Switch Cisco Catalyst 24 ports</div><div class="liv-direction">Direction Technique Infrastructure</div></div>
+              <div class="badge-etat etat-pend">En Attente</div>
+            </div>
+            <div class="livraison-item" style="grid-template-columns:60px 1fr auto auto">
+              <div class="liv-day" style="font-size:0.8rem">Mercredi</div>
+              <div><div class="liv-name">PC Assemblés Core i7 x5 unités</div><div class="liv-direction">Cabinet du Ministre</div></div>
+              <div class="badge-etat etat-ok">Livré</div>
+            </div>
+            <div class="livraison-item" style="grid-template-columns:60px 1fr auto auto">
+              <div class="liv-day" style="font-size:0.8rem">Jeudi</div>
+              <div><div class="liv-name">Onduleurs APC 1500VA x8</div><div class="liv-direction">Direction Financière</div></div>
+              <div class="badge-etat etat-late">En Retard</div>
+            </div>
+            <div class="livraison-item" style="grid-template-columns:60px 1fr auto auto">
+              <div class="liv-day" style="font-size:0.8rem">Vendredi</div>
+              <div><div class="liv-name">Imprimantes Laser HP LaserJet x3</div><div class="liv-direction">Direction des Ressources Humaines</div></div>
+              <div class="badge-etat etat-pend">Programmé</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---- TAB: STATISTIQUES ---- -->
+    <div id="tab-statistiques" style="display:none">
+      <div class="stats-row">
+        <div class="stat-card" style="border-top:2px solid #E8593C">
+          <div class="stat-label">Maintenance</div>
+          <div class="stat-value" style="color:#E8593C">86</div>
+          <div class="stat-sub">35% du total</div>
+        </div>
+        <div class="stat-card" style="border-top:2px solid #3B8BD4">
+          <div class="stat-label">Installation</div>
+          <div class="stat-value" style="color:#3B8BD4">62</div>
+          <div class="stat-sub">25% du total</div>
+        </div>
+        <div class="stat-card" style="border-top:2px solid #2D8C4E">
+          <div class="stat-label">Restauration</div>
+          <div class="stat-value" style="color:#2D8C4E">49</div>
+          <div class="stat-sub">20% du total</div>
+        </div>
+        <div class="stat-card" style="border-top:2px solid #9B59B6">
+          <div class="stat-label">Supervision</div>
+          <div class="stat-value" style="color:#9B59B6">20</div>
+          <div class="stat-sub">8% du total</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">📊 Graphique par Type d'Intervention</span></div>
+        <div class="panel-body" style="display:flex;align-items:center;justify-content:center;gap:3rem;padding:2rem">
+          <div style="position:relative">
+            <svg width="220" height="220" viewBox="0 0 220 220">
+              <!-- Grand donut -->
+              <circle cx="110" cy="110" r="85" fill="none" stroke="#E8593C" stroke-width="28"
+                stroke-dasharray="187 346" stroke-dashoffset="0" transform="rotate(-90 110 110)"/>
+              <circle cx="110" cy="110" r="85" fill="none" stroke="#3B8BD4" stroke-width="28"
+                stroke-dasharray="133 400" stroke-dashoffset="-187" transform="rotate(-90 110 110)"/>
+              <circle cx="110" cy="110" r="85" fill="none" stroke="#2D8C4E" stroke-width="28"
+                stroke-dasharray="107 426" stroke-dashoffset="-320" transform="rotate(-90 110 110)"/>
+              <circle cx="110" cy="110" r="85" fill="none" stroke="#C8963E" stroke-width="28"
+                stroke-dasharray="62 471" stroke-dashoffset="-427" transform="rotate(-90 110 110)"/>
+              <circle cx="110" cy="110" r="85" fill="none" stroke="#9B59B6" stroke-width="28"
+                stroke-dasharray="44 489" stroke-dashoffset="-489" transform="rotate(-90 110 110)"/>
+              <circle cx="110" cy="110" r="68" fill="rgba(13,27,15,0.98)"/>
+              <text x="110" y="104" text-anchor="middle" font-family="'Cinzel',serif" font-size="24" fill="#FAF8F2">247</text>
+              <text x="110" y="124" text-anchor="middle" font-family="'Crimson Pro',serif" font-size="12" fill="rgba(250,248,242,0.45)">interventions</text>
+            </svg>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.85rem">
+            <div style="display:flex;align-items:center;gap:1rem">
+              <div style="width:14px;height:14px;border-radius:50%;background:#E8593C;flex-shrink:0"></div>
+              <div style="flex:1">
+                <div style="font-size:0.85rem;color:var(--blanc)">Résolution / Maintenance matériel</div>
+                <div style="font-size:0.7rem;color:var(--text-muted)">86 interventions</div>
+              </div>
+              <div style="font-family:'Cinzel',serif;font-size:1.1rem;color:#E8593C">35%</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:1rem">
+              <div style="width:14px;height:14px;border-radius:50%;background:#3B8BD4;flex-shrink:0"></div>
+              <div style="flex:1">
+                <div style="font-size:0.85rem;color:var(--blanc)">Installation / Configuration matériel</div>
+                <div style="font-size:0.7rem;color:var(--text-muted)">62 interventions</div>
+              </div>
+              <div style="font-family:'Cinzel',serif;font-size:1.1rem;color:#3B8BD4">25%</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:1rem">
+              <div style="width:14px;height:14px;border-radius:50%;background:#2D8C4E;flex-shrink:0"></div>
+              <div style="flex:1">
+                <div style="font-size:0.85rem;color:var(--blanc)">Restauration / Mise à niveau logiciels</div>
+                <div style="font-size:0.7rem;color:var(--text-muted)">49 interventions</div>
+              </div>
+              <div style="font-family:'Cinzel',serif;font-size:1.1rem;color:#2D8C4E">20%</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:1rem">
+              <div style="width:14px;height:14px;border-radius:50%;background:#C8963E;flex-shrink:0"></div>
+              <div style="flex:1">
+                <div style="font-size:0.85rem;color:var(--blanc)">État des périphériques informatiques</div>
+                <div style="font-size:0.7rem;color:var(--text-muted)">30 interventions</div>
+              </div>
+              <div style="font-family:'Cinzel',serif;font-size:1.1rem;color:#C8963E">12%</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:1rem">
+              <div style="width:14px;height:14px;border-radius:50%;background:#9B59B6;flex-shrink:0"></div>
+              <div style="flex:1">
+                <div style="font-size:0.85rem;color:var(--blanc)">Supervision et analyse des pannes</div>
+                <div style="font-size:0.7rem;color:var(--text-muted)">20 interventions</div>
+              </div>
+              <div style="font-family:'Cinzel',serif;font-size:1.1rem;color:#9B59B6">8%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profile-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <button class="modal-close-btn" onclick="closeModal()">✕</button>
+    <div class="modal-title">◆ Mon Profil</div>
+    <div class="profile-avatar-lg">AD</div>
+    <div class="profile-info-row"><span class="pir-label">Nom complet</span><span class="pir-val">Admin SIGIT</span></div>
+    <div class="profile-info-row"><span class="pir-label">Rôle</span><span class="pir-val">Technicien DSI</span></div>
+    <div class="profile-info-row"><span class="pir-label">Email</span><span class="pir-val">admin@mnc.gov.mg</span></div>
+    <div class="profile-info-row"><span class="pir-label">Département</span><span class="pir-val">Direction des SI</span></div>
+    <div class="profile-info-row"><span class="pir-label">Dernière connexion</span><span class="pir-val">Aujourd'hui 08:24</span></div>
+    <div class="modal-actions">
+      <button class="btn-modal" onclick="alert('Modification du profil — page dédiée en CakePHP')">✏️ Modifier</button>
+      <button class="btn-modal danger" onclick="window.location='accueil.html'">⏻ Déconnexion</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Navigation tabs
+  function switchTab(name, el){
+    document.querySelectorAll('[id^="tab-"]').forEach(t=>t.style.display='none');
+    document.getElementById('tab-'+name).style.display='block';
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    if(el)el.classList.add('active');
+    const titles={
+      dashboard:'📊 Tableau de Bord',
+      interventions:'🛠️ Interventions',
+      livraison:'📦 Liste de Livraison',
+      statistiques:'📈 Statistiques'
+    };
+    document.getElementById('page-title').textContent=titles[name]||name;
+  }
+  function openProfile(){
+    document.getElementById('profile-modal').classList.add('active');
+  }
+  function closeModal(){
+    document.getElementById('profile-modal').classList.remove('active');
+  }
+  function openNewIntervention(){
+    switchTab('dashboard',null);
+    document.getElementById('f-date').focus();
+  }
+  // Set today's date
+  document.getElementById('f-date').valueAsDate = new Date();
+</script>
+</body>
+</html>

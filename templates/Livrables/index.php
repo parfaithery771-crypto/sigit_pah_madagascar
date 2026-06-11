@@ -1,7 +1,7 @@
 <?php $s=$this->request->getSession();$u=$s->read("Auth.nom")??"";$r=$s->read("Auth.role")??""; ?>
 <div class="app">
 <div class="sidebar">
-<div class="sidebar-header"><svg width="32" height="32" viewBox="0 0 120 120"><circle cx="60" cy="60" r="58" fill="none" stroke="#2D8C4E" stroke-width="2"/><rect x="32" y="38" width="56" height="36" rx="4" fill="none" stroke="#2D8C4E" stroke-width="2"/></svg><div><div class="sidebar-logo-text">SIGIT</div><div class="sidebar-sub">MNC Madagascar</div></div></div>
+<div class="sidebar-header"><img src="/img/logo_mincc.png" style="width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(184,150,46,0.4))"><div><div class="sidebar-logo-text">SIGIT</div><div class="sidebar-sub">Ministere du Commerce et de la Consommation</div></div></div>
 <nav class="nav">
 <div class="nav-section">Principal</div>
 <a href="/dashboard" class="nav-item">&#128202; Tableau de Bord</a>
@@ -47,6 +47,19 @@
 <select name="etat"><option value="en_attente">En attente</option><option value="livre">Livre</option><option value="retard">En retard</option></select></div>
 <div class="field" style="margin-bottom:1rem"><label>Intervention ID</label><input type="number" name="intervention_id" placeholder="optionnel"></div>
 <input type="submit" value="Ajouter" class="btn-submit">
-</form>
+<script>var di=document.querySelector('input[name="date_livraison"]');if(di){di.addEventListener("change",function(){var d=new Date(this.value).getUTCDay();if(d===0||d===6){alert("Lundi au Vendredi uniquement pour la date de livraison!");this.value="";}})};</script></form>
+<script>
+var dateInput = document.querySelector('input[name="date_livraison"]');
+if(dateInput){
+    dateInput.addEventListener('change', function(){
+        var day = new Date(this.value).getUTCDay();
+        if(day===0 || day===6){
+            alert('Du lundi au vendredi, les créneaux horaires ne peuvent être remplis qu'ici.');
+            this.value = '';
+        }
+    });
+}
+</script>
+<script>var di=document.querySelector('input[name="date_livraison"]');if(di){di.addEventListener("change",function(){var d=new Date(this.value).getUTCDay();if(d===0||d===6){alert("Lundi au Vendredi uniquement pour la date de livraison!");this.value="";}})};</script></form>
 </div></div>
 </div></div></div>
