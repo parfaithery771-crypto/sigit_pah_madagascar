@@ -1,4 +1,11 @@
 FROM php:8.2-apache
+RUN docker-php-ext-install pdo pdo_mysql
+COPY . /var/www/html/
+RUN chown -R www-data:www-data /var/www/html
+ENV APACHE_DOCUMENT_ROOT /var/www/html/webroot
+RUN sed -i 's|/var/www/html|/var/www/html/webroot|g' /etc/apache2/sites-available/000-default.conf
+RUN a2enmod rewrite
+EXPOSE 80FROM php:8.2-apache
 
 RUN apt-get update && apt-get install -y \
     libpng-dev \
