@@ -1,15 +1,11 @@
 <?php
 header("Content-Type: text/plain");
-try {
-    $pdo = new PDO("mysql:host=sql7.freesqldatabase.com;port=3306;dbname=sql7830743", "sql7830743", "X9UVEJYT3f", [PDO::ATTR_TIMEOUT => 5]);
-    echo "PDO CONNECTED OK\n";
-    $stmt = $pdo->query("SHOW TABLES");
-    echo "Tables:\n";
-    foreach ($stmt->fetchAll(PDO::FETCH_COLUMN) as $t) {
-        echo "- $t\n";
-    }
-    $stmt2 = $pdo->query("SELECT COUNT(*) FROM users");
-    echo "Users count: " . $stmt2->fetchColumn() . "\n";
-} catch (Exception $e) {
-    echo "PDO ERROR: " . $e->getMessage() . "\n";
-}
+require dirname(__DIR__) . "/vendor/autoload.php";
+use App\Application;
+$app = new Application(dirname(__DIR__) . "/config");
+echo "debug = " . var_export(\Cake\Core\Configure::read("debug"), true) . "\n";
+$ds = \Cake\Core\Configure::read("Datasources.default");
+if (isset($ds["password"])) { $ds["password"] = "HIDDEN"; }
+echo "Datasources.default:\n" . print_r($ds, true) . "\n";
+echo "getenv DATABASE_URL = " . (getenv("DATABASE_URL") ? "SET" : "NOT SET") . "\n";
+echo "getenv DEBUG = " . var_export(getenv("DEBUG"), true) . "\n";
