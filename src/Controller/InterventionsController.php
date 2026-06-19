@@ -31,12 +31,12 @@ class InterventionsController extends AppController
                 'user_id'             => $session->read('Auth.id'),
             ]);
             if ($Interventions->save($intervention)) {
-                $this->Flash->success('Intervention ajoutee avec succes.');
-                return $this->redirect('/dashboard');
-            }
-            $this->Flash->error('Erreur lors de l ajout.');
-        }
-        return $this->redirect('/dashboard');
+    $this->Flash->success('Intervention ajoutee avec succes.');
+    return $this->redirect('/dashboard');
+}
+
+debug($intervention->getErrors());
+die('SAVE FAILED');
     }
 
     public function edit($id = null)
