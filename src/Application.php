@@ -23,12 +23,9 @@ class Application extends BaseApplication
         FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(false));
     }
 
-    public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
-    {
-        $middlewareQueue
-            ->add(new ErrorHandlerMiddleware(Configure::read('Error'), $this))
-            ->add(new HostHeaderMiddleware())
-            ->add(new AssetMiddleware(['cacheTime' => Configure::read('Asset.cacheTime')]))
+    public function middleware(MiddlewareQueue $middlewareQueue
+            //->add(new ErrorHandlerMiddleware(Configure::read('Error'), $this))
+            ->add(new HostHeaderMiddleware())          ->add(new AssetMiddleware(['cacheTime' => Configure::read('Asset.cacheTime')]))
             ->add(new RoutingMiddleware($this))
             ->add(new BodyParserMiddleware());
 
