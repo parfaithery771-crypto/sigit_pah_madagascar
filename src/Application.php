@@ -24,6 +24,8 @@ class Application extends BaseApplication
     }
 
     public function middleware(MiddlewareQueue $middlewareQueue
+    ->add(new ErrorHandlerMiddleware(Configure::read('Error'), $this))
+    ->add(new HostHeaderMiddleware())
             //->add(new ErrorHandlerMiddleware(Configure::read('Error'), $this))
             ->add(new HostHeaderMiddleware())          ->add(new AssetMiddleware(['cacheTime' => Configure::read('Asset.cacheTime')]))
             ->add(new RoutingMiddleware($this))
