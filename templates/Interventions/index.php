@@ -1,4 +1,4 @@
-<?php $s=$this->request->getSession();$u=$s->read("Auth.nom")??"";$r=$s->read("Auth.role")??""; ?>
+<?php $this->disableAutoLayout(); ?><?php $s=$this->request->getSession();$u=$s->read("Auth.nom")??"";$r=$s->read("Auth.role")??""; ?>
 <div class="app">
 <div class="sidebar">
 <div class="sidebar-header"><img src="/img/logo_mincc.png" style="width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(184,150,46,0.4))"><div><div class="sidebar-logo-text">SIGIT</div><div class="sidebar-sub">Ministere du Commerce et de la Consommation</div></div></div>
@@ -31,7 +31,7 @@
 <td><span class="badge-etat <?= $i->statut==="repare"?"etat-ok":($i->statut==="cours"?"etat-pend":"etat-late") ?>"><?= h($i->statut) ?></span></td>
 <td style="display:flex;gap:0.4rem">
 <a href="/interventions/edit/<?= $i->id ?>" class="btn-action" style="font-size:0.7rem;padding:0.25rem 0.6rem">Editer</a>
-<a href="/interventions/delete/<?= $i->id ?>" class="btn-action" style="font-size:0.7rem;padding:0.25rem 0.6rem;color:#E06060" onclick="return confirm(chr(39)+"Supprimer ?"+chr(39))">Suppr</a>
+<a href="/interventions/delete/<?= $i->id ?>" class="btn-action" style="font-size:0.7rem;padding:0.25rem 0.6rem;color:#E06060" onclick="return confirm('Supprimer ?')">Suppr</a>
 </td>
 </tr>
 <?php endforeach; endif; ?>
