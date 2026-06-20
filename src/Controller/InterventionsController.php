@@ -18,7 +18,7 @@ class InterventionsController extends AppController
         }
     }
 
-    public function add()
+  public function add()
 {
     $redirect = $this->requireLogin();
     if ($redirect) return $redirect;
@@ -30,7 +30,7 @@ class InterventionsController extends AppController
             'date_intervention'   => $data['date_intervention'],
             'observation'         => $data['observation'] ?? '',
             'description_travaux' => $data['description_travaux'] ?? '',
-            'beneficiaire'        => $data['beneficiaire'],
+            'beneficiaire'        => $data['beneficiaire'] ?? '',
             'type_intervention'   => $data['type_intervention'],
             'statut'              => $data['statut'] ?? 'cours',
             'user_id'             => $session->read('Auth.id'),
@@ -38,13 +38,14 @@ class InterventionsController extends AppController
         try {
             if ($Interventions->save($intervention)) {
                 $this->Flash->success('Intervention ajoutee avec succes.');
-                return $this->redirect('/dashboard');
+            } else {
+                $this->Flash->error('Erreur: ' . json_encode($intervention->getErrors()));
             }
-            $this->Flash->error('Validation: ' . json_encode($intervention->getErrors()));
-            return $this->redirect('/dashboard');
         } catch (\Exception $e) {
             $this->Flash->error('Exception: ' . $e->getMessage());
-            return $this->redirect('/dashboard');
         }
+    }
+    return $this->redirect('/dashboard');
+}
     }
 }
