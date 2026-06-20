@@ -1,6 +1,6 @@
 <?php
 return [
-    "debug" => true,
+    "debug" => true, "Error" => ["exceptionRenderer" => "Cake\\Error\\ExceptionRenderer"],
     "Security" => [
         "salt" => "sigit-madagascar-repoblika-2025-secure-salt-key",
     ],
