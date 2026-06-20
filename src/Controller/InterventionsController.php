@@ -6,6 +6,7 @@ class InterventionsController extends AppController
     public function index()
     {
         $redirect = $this->requireLogin();
+        $this->viewBuilder()->setLayout('ajax');
         if ($redirect) return $redirect;
         try {
             $Interventions = $this->getTableLocator()->get('Interventions');
