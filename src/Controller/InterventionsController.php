@@ -1,16 +1,20 @@
 <?php
 declare(strict_types=1);
 namespace App\Controller;
-
 class InterventionsController extends AppController
 {
     public function index()
     {
         $redirect = $this->requireLogin();
         if ($redirect) return $redirect;
-        $Interventions = $this->getTableLocator()->get('Interventions');
-        $interventions = $Interventions->find()->orderBy(['id' => 'DESC'])->toArray();
-        $this->set('interventions', $interventions);
+        try {
+            $Interventions = $this->getTableLocator()->get('Interventions');
+            $interventions = $Interventions->find()->orderBy(['Interventions.id' => 'DESC'])->toArray();
+            $this->set('interventions', $interventions);
+        } catch (\Exception $e) {
+            $this->Flash->error('Erreur: ' . $e->getMessage());
+            $this->set('interventions', []);
+        }
     }
 
     public function add()
@@ -31,12 +35,12 @@ class InterventionsController extends AppController
                 'user_id'             => $session->read('Auth.id'),
             ]);
             if ($Interventions->save($intervention)) {
-    $this->Flash->success('Intervention ajoutee avec succes.');
-    return $this->redirect('/dashboard');
-}
-
-$this->Flash->error('Erreur lors de l enregistrement.');
-return $this->redirect('/dashboard');
+                $this->Flash->success('Intervention ajoutee avec succes.');
+                return $this->redirect('/dashboard');
+            }
+            $this->Flash->error('Erreur lors de l enregistrement.');
+            return $this->redirect('/dashboard');
+        }
     }
 
     public function edit($id = null)
