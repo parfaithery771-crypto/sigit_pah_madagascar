@@ -35,8 +35,8 @@ class InterventionsController extends AppController
     return $this->redirect('/dashboard');
 }
 
-debug($intervention->getErrors());
-die('SAVE FAILED');
+$this->Flash->error('Erreur lors de l enregistrement.');
+return $this->redirect('/dashboard');
     }
 
     public function edit($id = null)
