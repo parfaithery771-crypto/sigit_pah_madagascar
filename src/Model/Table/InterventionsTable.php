@@ -9,7 +9,7 @@ class InterventionsTable extends Table
     {
         parent::initialize($config);
         $this->setTable('interventions');
-        $this->addBehavior('Timestamp');
+        
         $this->belongsTo('Users', ['foreignKey' => 'user_id']);
         $this->hasMany('Livrables', ['foreignKey' => 'intervention_id']);
     }
