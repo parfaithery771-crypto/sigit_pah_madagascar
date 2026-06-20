@@ -9,7 +9,7 @@ class InterventionsController extends AppController
         $redirect = $this->requireLogin();
         if ($redirect) return $redirect;
         $Interventions = $this->getTableLocator()->get('Interventions');
-        $interventions = $Interventions->find()->orderBy(['created' => 'DESC'])->toArray();
+        $interventions = $Interventions->find()->orderBy(['id' => 'DESC'])->toArray();
         $this->set('interventions', $interventions);
     }
 

@@ -79,7 +79,7 @@ class UsersController extends AppController
         if ($redirect) return $redirect;
         $session = $this->request->getSession();
         $Users = $this->getTableLocator()->get("Users");
-        $user = $Users->get($session->read("Auth.id"));
+        $userId = $session->read("Auth.id"); if (!$userId) return $this->redirect("/"); $user = $Users->find()->where(["id" => $userId])->first(); if (!$user) return $this->redirect("/users/logout");
         $session->write("Auth.avatar", $user->avatar ?? "");
         $this->set("user", $user);
     }
@@ -102,7 +102,7 @@ class UsersController extends AppController
             }
             $session = $this->request->getSession();
             $Users = $this->getTableLocator()->get("Users");
-            $user = $Users->get($session->read("Auth.id"));
+            $userId = $session->read("Auth.id"); if (!$userId) return $this->redirect("/"); $user = $Users->find()->where(["id" => $userId])->first(); if (!$user) return $this->redirect("/users/logout");
             $user->password = password_hash($newPwd, PASSWORD_DEFAULT);
             if ($Users->save($user)) {
                 $this->Flash->success("Mot de passe modifie avec succes.");
