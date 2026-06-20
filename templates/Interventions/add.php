@@ -1,3 +1,4 @@
+<?php $this->disableAutoLayout(); ?>
 <?php $this->assign('title', 'Nouvelle Intervention'); ?>
 <p><?= $this->Flash->render() ?></p>
 <form method="post" action="/interventions/add">
