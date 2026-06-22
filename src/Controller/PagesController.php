@@ -11,10 +11,12 @@ class PagesController extends AppController
         if (!$this->isLoggedIn()) { $this->redirect("/login"); return; }
         $Interventions = $this->getTableLocator()->get("Interventions");
         $Livrables = $this->getTableLocator()->get("Livrables");
-        $total      = $Interventions->find()->count();
-        $resolues   = $Interventions->find()->where(["statut"=>"repare"])->count();
-        $enCours    = $Interventions->find()->where(["statut"=>"cours"])->count();
-        $reparables = $Interventions->find()->where(["statut"=>"reparable"])->count();
+        $userId = $this->currentUserId();
+        $baseQuery = $this->isAdmin() ? [] : ["user_id" => $userId];
+        $total      = $Interventions->find()->where($baseQuery)->count();
+        $resolues   = $Interventions->find()->where(array_merge($baseQuery, ["statut"=>"repare"]))->count();
+        $enCours    = $Interventions->find()->where(array_merge($baseQuery, ["statut"=>"cours"]))->count();
+        $reparables = $Interventions->find()->where(array_merge($baseQuery, ["statut"=>"reparable"]))->count();
         $stats = [
             ["label"=>"Total",     "value"=>$total,     "sub"=>"Toutes",    "icon"=>"&#9874;"],
             ["label"=>"Resolues",  "value"=>$resolues,  "sub"=>"Reglees",   "icon"=>"&#10003;"],
@@ -29,20 +31,13 @@ class PagesController extends AppController
             "supervision_analyse_pannes" => $Interventions->find()->where(["type_intervention"=>"supervision_analyse_pannes"])->count(),
         ];
         $livrablesList = $Livrables->find()->orderBy(["date_livraison"=>"DESC"])->limit(5)->toArray();
-        if ($this->isAdmin()) {
-            $recentInterventions = $Interventions->find()->orderBy(["created"=>"DESC"])->limit(10)->toArray();
-        } else {
-            $userId = $this->currentUserId();
-            $recentInterventions = $Interventions->find()->where(["user_id"=>$userId])->orderBy(["created"=>"DESC"])->limit(10)->toArray();
-            $total      = $Interventions->find()->where(["user_id"=>$userId])->count();
-            $resolues   = $Interventions->find()->where(["statut"=>"repare","user_id"=>$userId])->count();
-            $enCours    = $Interventions->find()->where(["statut"=>"cours","user_id"=>$userId])->count();
-            $reparables = $Interventions->find()->where(["statut"=>"reparable","user_id"=>$userId])->count();
-            $stats = [
-                ["label"=>"Total",     "value"=>$total,     "sub"=>"Toutes",    "icon"=>"&#9874;"],
-                ["label"=>"Resolues",  "value"=>$resolues,  "sub"=>"Reglees",   "icon"=>"&#10003;"],
-                ["label"=>"En Cours",  "value"=>$enCours,   "sub"=>"Traitement","icon"=>"&#9203;"],
-                ["label"=>"Reparables","value"=>$reparables,"sub"=>"En attente","icon"=>"&#128295;"],
+        $recentInterventions = $Interventions->find()->where($baseQuery)->orderBy(["created"=>"DESC"])->limit(10)->toArray();
+        $stats = [
+            ["label"=>"Total",     "value"=>$total,     "sub"=>"Toutes",    "icon"=>"&#9874;"],
+            ["label"=>"Resolues",  "value"=>$resolues,  "sub"=>"Reglees",   "icon"=>"&#10003;"],
+            ["label"=>"En Cours",  "value"=>$enCours,   "sub"=>"Traitement","icon"=>"&#9203;"],
+            ["label"=>"Reparables","value"=>$reparables,"sub"=>"En attente","icon"=>"&#128295;"],
+        ];
             ];
         }
         $this->set(compact("stats","livrablesList","recentInterventions","countByType","total","resolues","enCours","reparables"));
