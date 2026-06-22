@@ -8,15 +8,6 @@ class InterventionsController extends AppController
         $redirect = $this->requireLogin();
         if ($redirect) return $redirect;
         try {
-    if ($Interventions->save($intervention)) {
-        
-        $this->Flash->success('Intervention ajoutee avec succes.');
-    } else {
-        $this->Flash->error('Erreur: ' . json_encode($intervention->getErrors()));
-    }
-} catch (\Exception $e) {
-    $this->Flash->error('Exception: ' . $e->getMessage());
-}
             $Interventions = $this->getTableLocator()->get('Interventions');
             $interventions = $Interventions->find()->orderBy(['Interventions.id' => 'DESC'])->toArray();
             $this->set('interventions', $interventions);
@@ -96,9 +87,7 @@ class InterventionsController extends AppController
         if ($redirect) return $redirect;
         try {
             $Interventions = $this->getTableLocator()->get('Interventions');
-            $intervention = $Interventions->find()
-                ->where(['Interventions.id' => (int)$id])
-                ->first();
+            $intervention = $Interventions->find()->where(['Interventions.id' => (int)$id])->first();
             if ($intervention) {
                 $Interventions->delete($intervention);
                 $this->Flash->success('Intervention supprimee.');
