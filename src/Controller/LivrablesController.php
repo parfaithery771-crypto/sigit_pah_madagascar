@@ -37,7 +37,8 @@ class LivrablesController extends AppController
         $redirect = $this->requireLogin();
         if ($redirect) return $redirect;
         $Livrables = $this->getTableLocator()->get("Livrables");
-        $livrable = $Livrables->get($id);
+        $livrable = $Livrables->find()->where(['id' => $id])->first();
+if (!$livrable) { $this->Flash->error('Livrable introuvable.'); return $this->redirect('/livrables'); }
         if ($this->request->is(["post", "put"])) {
             $data = $this->request->getData();
             $etat = $data["etat"] ?? $livrable->etat ?? "en_attente";
