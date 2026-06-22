@@ -188,3 +188,11 @@ class UsersController extends AppController
         exit;
     }
 }
+public function index()
+{
+    $redirect = $this->requireAdmin();
+    if ($redirect) return $redirect;
+    $Users = $this->getTableLocator()->get('Users');
+    $users = $Users->find()->orderBy(['id' => 'DESC'])->toArray();
+    $this->set('users', $users);
+}

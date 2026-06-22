@@ -15,7 +15,7 @@ return static function (RouteBuilder $routes): void {
         $builder->connect("/users/login", ["controller"=>"Users","action"=>"login"]);
         $builder->connect("/users/logout", ["controller"=>"Users","action"=>"logout"]);
         $builder->connect("/users/register", ["controller"=>"Users","action"=>"register"]);
-        $builder->connect("/users/forgot", ["controller"=>"Users","action"=>"forgot"]);
+     $builder->connect("/admin/users", ["controller"=>"Users","action"=>"index"]);   $builder->connect("/users/forgot", ["controller"=>"Users","action"=>"forgot"]);
         $builder->connect("/users/profile", ["controller"=>"Users","action"=>"profile"]);
         $builder->connect("/users/change-password", ["controller"=>"Users","action"=>"changePassword"]);
         $builder->connect("/users/upload-avatar", ["controller"=>"Users","action"=>"uploadAvatar"]);
