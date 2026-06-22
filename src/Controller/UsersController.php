@@ -133,7 +133,12 @@ class UsersController extends AppController
                 $session = $this->request->getSession();
                 $userId = $session->read("Auth.id");
                 $filename = "avatar_" . $userId . "_" . time() . "." . $ext;
-                $uploadPath = WWW_ROOT . "uploads" . DS . "avatars" . DS . $filename;
+                $uploadDir = WWW_ROOT . "uploads" . DS . "avatars";
+if (!is_dir($uploadDir)) {
+    mkdir($uploadDir, 0755, true);
+}
+$uploadPath = $uploadDir . DS . $filename;
+$file->moveTo($uploadPath);
                 $file->moveTo($uploadPath);
                 $Users = $this->getTableLocator()->get("Users");
                 $user = $Users->find()->where(['id' => $userId])->first(); if (!$user) return $this->redirect('/users/profile');
