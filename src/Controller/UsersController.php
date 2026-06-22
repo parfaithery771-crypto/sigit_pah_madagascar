@@ -79,7 +79,10 @@ class UsersController extends AppController
         if ($redirect) return $redirect;
         $session = $this->request->getSession();
         $Users = $this->getTableLocator()->get("Users");
-        $userId = $session->read("Auth.id"); if (!$userId) return $this->redirect("/"); $user = $Users->find()->where(["id" => $userId])->first(); if (!$user) return $this->redirect("/users/logout");
+        $userId = $session->read("Auth.id");
+        if (!$userId) return $this->redirect("/");
+        $user = $Users->find()->where(["id" => $userId])->first();
+        if (!$user) return $this->redirect("/users/logout");
         $session->write("Auth.avatar", $user->avatar ?? "");
         $this->set("user", $user);
     }
@@ -102,7 +105,10 @@ class UsersController extends AppController
             }
             $session = $this->request->getSession();
             $Users = $this->getTableLocator()->get("Users");
-            $userId = $session->read("Auth.id"); if (!$userId) return $this->redirect("/"); $user = $Users->find()->where(["id" => $userId])->first(); if (!$user) return $this->redirect("/users/logout");
+            $userId = $session->read("Auth.id");
+            if (!$userId) return $this->redirect("/");
+            $user = $Users->find()->where(["id" => $userId])->first();
+            if (!$user) return $this->redirect("/users/logout");
             $user->password = password_hash($newPwd, PASSWORD_DEFAULT);
             if ($Users->save($user)) {
                 $this->Flash->success("Mot de passe modifie avec succes.");
@@ -117,45 +123,49 @@ class UsersController extends AppController
     {
         $redirect = $this->requireLogin();
         if ($redirect) return $redirect;
-        if ($this->request->is("post")) {
-            $file = $this->request->getUploadedFile("avatar");
-            if ($file && $file->getError() === UPLOAD_ERR_OK) {
-                $ext = strtolower(pathinfo($file->getClientFilename(), PATHINFO_EXTENSION));
-                $allowed = ["jpg","jpeg","png","gif","webp"];
-                if (!in_array($ext, $allowed)) {
-                    $this->Flash->error("Format non supporte. Utilisez JPG ou PNG.");
-                    return $this->redirect("/users/profile");
-                }
-                if ($file->getSize() > 2 * 1024 * 1024) {
-                    $this->Flash->error("Image trop grande. Maximum 2MB.");
-                    return $this->redirect("/users/profile");
-                }
-                $session = $this->request->getSession();
-                $userId = $session->read("Auth.id");
-                $filename = "avatar_" . $userId . "_" . time() . "." . $ext;
-                $uploadDir = WWW_ROOT . "uploads" . DS . "avatars";
-if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0755, true);
-}
-$uploadPath = $uploadDir . DS . $filename;
-$file->moveTo($uploadPath);
-                $file->moveTo($uploadPath);
-                $Users = $this->getTableLocator()->get("Users");
-                $user = $Users->find()->where(['id' => $userId])->first(); if (!$user) return $this->redirect('/users/profile');
-                $old = $user->avatar ?? "";
-                if ($old && file_exists(WWW_ROOT . "uploads" . DS . "avatars" . DS . $old)) {
-                    unlink(WWW_ROOT . "uploads" . DS . "avatars" . DS . $old);
-                }
-                $user->avatar = $filename;
-                if ($Users->save($user)) {
-                    $session->write("Auth.avatar", $filename);
-                    $this->Flash->success("Photo de profil mise a jour.");
+        try {
+            if ($this->request->is("post")) {
+                $file = $this->request->getUploadedFile("avatar");
+                if ($file && $file->getError() === UPLOAD_ERR_OK) {
+                    $ext = strtolower(pathinfo($file->getClientFilename(), PATHINFO_EXTENSION));
+                    $allowed = ["jpg","jpeg","png","gif","webp"];
+                    if (!in_array($ext, $allowed)) {
+                        $this->Flash->error("Format non supporte. Utilisez JPG ou PNG.");
+                        return $this->redirect("/users/profile");
+                    }
+                    if ($file->getSize() > 2 * 1024 * 1024) {
+                        $this->Flash->error("Image trop grande. Maximum 2MB.");
+                        return $this->redirect("/users/profile");
+                    }
+                    $session = $this->request->getSession();
+                    $userId = $session->read("Auth.id");
+                    $filename = "avatar_" . $userId . "_" . time() . "." . $ext;
+                    $uploadDir = WWW_ROOT . "uploads" . DS . "avatars";
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0777, true);
+                    }
+                    $uploadPath = $uploadDir . DS . $filename;
+                    $file->moveTo($uploadPath);
+                    $Users = $this->getTableLocator()->get("Users");
+                    $user = $Users->find()->where(["id" => $userId])->first();
+                    if (!$user) return $this->redirect("/users/profile");
+                    $old = $user->avatar ?? "";
+                    if ($old && file_exists($uploadDir . DS . $old)) {
+                        unlink($uploadDir . DS . $old);
+                    }
+                    $user->avatar = $filename;
+                    if ($Users->save($user)) {
+                        $session->write("Auth.avatar", $filename);
+                        $this->Flash->success("Photo de profil mise a jour.");
+                    } else {
+                        $this->Flash->error("Erreur sauvegarde: " . json_encode($user->getErrors()));
+                    }
                 } else {
-                    $this->Flash->error("Erreur lors de la sauvegarde.");
+                    $this->Flash->error("Aucun fichier selectionne.");
                 }
-            } else {
-                $this->Flash->error("Aucun fichier selectionne.");
             }
+        } catch (\Exception $e) {
+            $this->Flash->error("Exception: " . $e->getMessage());
         }
         return $this->redirect("/users/profile");
     }
