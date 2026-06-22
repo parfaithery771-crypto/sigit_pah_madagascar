@@ -4,17 +4,22 @@ namespace App\Controller;
 class InterventionsController extends AppController
 {
     public function index()
-    {
-        $redirect = $this->requireLogin();
-        if ($redirect) return $redirect;
-        try {
-            $Interventions = $this->getTableLocator()->get('Interventions');
+{
+    $redirect = $this->requireLogin();
+    if ($redirect) return $redirect;
+    try {
+        $Interventions = $this->getTableLocator()->get('Interventions');
+        if ($this->isAdmin()) {
             $interventions = $Interventions->find()->orderBy(['Interventions.id' => 'DESC'])->toArray();
-            $this->set('interventions', $interventions);
-        } catch (\Exception $e) {
-            $this->Flash->error('Erreur: ' . $e->getMessage());
-            $this->set('interventions', []);
+        } else {
+            $interventions = $Interventions->find()->where(['user_id' => $this->currentUserId()])->orderBy(['Interventions.id' => 'DESC'])->toArray();
         }
+        $this->set('interventions', $interventions);
+    } catch (\Exception $e) {
+        $this->Flash->error('Erreur: ' . $e->getMessage());
+        $this->set('interventions', []);
+    }
+}        }
     }
 
     public function add()
