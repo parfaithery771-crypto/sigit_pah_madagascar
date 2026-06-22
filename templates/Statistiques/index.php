@@ -33,7 +33,7 @@ $userRole = $session->read("Auth.role") ?? "technicien";
 <div class="content">
 <?= $this->Flash->render() ?>
 
-<!-- Cartes résumé -->
+<!-- Cartes rï¿½sumï¿½ -->
 <div class="stats-row">
 <div class="stat-card" style="border-top:2px solid #b5a642">
 <div class="stat-label">Total</div>
