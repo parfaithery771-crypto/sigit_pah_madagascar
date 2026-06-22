@@ -51,50 +51,69 @@ class InterventionsController extends AppController
     {
         $redirect = $this->requireLogin();
         if ($redirect) return $redirect;
-        $Interventions = $this->getTableLocator()->get('Interventions');
-        $intervention = $Interventions->get($id);
-        if ($this->request->is(['post', 'put'])) {
-            $data = $this->request->getData();
-            $intervention = $Interventions->patchEntity($intervention, [
-                'date_intervention'   => $data['date_intervention'],
-                'observation'         => $data['observation'] ?? '',
-                'description_travaux' => $data['description_travaux'] ?? '',
-                'beneficiaire'        => $data['beneficiaire'],
-                'type_intervention'   => $data['type_intervention'],
-                'statut'              => $data['statut'],
-            ]);
-            if ($Interventions->save($intervention)) {
-                $this->Flash->success('Intervention modifiee.');
+        try {
+            $Interventions = $this->getTableLocator()->get('Interventions');
+            $intervention = $Interventions->find()->where(['Interventions.id' => $id])->first();
+            if (!$intervention) {
+                $this->Flash->error('Intervention introuvable.');
                 return $this->redirect('/dashboard');
             }
+            if ($this->request->is(['post', 'put'])) {
+                $data = $this->request->getData();
+                $intervention = $Interventions->patchEntity($intervention, [
+                    'date_intervention'   => $data['date_intervention'],
+                    'observation'         => $data['observation'] ?? '',
+                    'description_travaux' => $data['description_travaux'] ?? '',
+                    'beneficiaire'        => $data['beneficiaire'] ?? '',
+                    'type_intervention'   => $data['type_intervention'],
+                    'statut'              => $data['statut'],
+                ]);
+                if ($Interventions->save($intervention)) {
+                    $this->Flash->success('Intervention modifiee.');
+                    return $this->redirect('/dashboard');
+                }
+                $this->Flash->error('Erreur modification.');
+            }
+            $this->set('intervention', $intervention);
+        } catch (\Exception $e) {
+            $this->Flash->error('Erreur: ' . $e->getMessage());
+            return $this->redirect('/dashboard');
         }
-        $this->set('intervention', $intervention);
     }
 
     public function delete($id = null)
-{
-    $redirect = $this->requireLogin();
-    if ($redirect) return $redirect;
-    try {
-        $Interventions = $this->getTableLocator()->get('Interventions');
-        $intervention = $Interventions->find()->where(['id' => $id])->first();
-        if ($intervention && $Interventions->delete($intervention)) {
-            $this->Flash->success('Intervention supprimee.');
-        } else {
-            $this->Flash->error('Intervention introuvable.');
+    {
+        $redirect = $this->requireLogin();
+        if ($redirect) return $redirect;
+        try {
+            $Interventions = $this->getTableLocator()->get('Interventions');
+            $intervention = $Interventions->find()
+                ->where(['Interventions.id' => (int)$id])
+                ->first();
+            if ($intervention) {
+                $Interventions->delete($intervention);
+                $this->Flash->success('Intervention supprimee.');
+            } else {
+                $this->Flash->error('Intervention introuvable.');
+            }
+        } catch (\Exception $e) {
+            $this->Flash->error('Erreur: ' . $e->getMessage());
         }
-    } catch (\Exception $e) {
-        $this->Flash->error('Erreur: ' . $e->getMessage());
+        return $this->redirect('/dashboard');
     }
-    return $this->redirect('/dashboard');
-}
 
     public function view($id = null)
     {
         $redirect = $this->requireLogin();
         if ($redirect) return $redirect;
-        $Interventions = $this->getTableLocator()->get('Interventions');
-        $intervention = $Interventions->get($id);
-        $this->set('intervention', $intervention);
+        try {
+            $Interventions = $this->getTableLocator()->get('Interventions');
+            $intervention = $Interventions->find()->where(['Interventions.id' => $id])->first();
+            if (!$intervention) return $this->redirect('/dashboard');
+            $this->set('intervention', $intervention);
+        } catch (\Exception $e) {
+            $this->Flash->error('Erreur: ' . $e->getMessage());
+            return $this->redirect('/dashboard');
+        }
     }
 }
