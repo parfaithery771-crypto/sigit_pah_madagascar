@@ -7,9 +7,13 @@
 <a href="/dashboard" class="nav-item">&#128202; Tableau de Bord</a>
 <div class="nav-section">Gestion</div>
 <a href="/interventions" class="nav-item active">&#128736; Interventions</a>
-<a href="/livrables" class="nav-item">&#128197; Livrables</a>
+<a href="/livrables" class="nav-item">&#128197; Livrables</a><div class="nav-section">Administration</div>
+<a href="/beneficiaires" class="nav-item">&#128101; Beneficiaires</a>
+<a href="/materiel" class="nav-item">&#128187; Parc Materiel</a>
+<a href="/rapports" class="nav-item">&#128196; Rapports</a>
+<a href="/statistiques" class="nav-item">&#128202; Statistiques</a>
 <div class="nav-section">Compte</div>
-<a href="/users/profile" class="nav-item">&#128100; Mon Profil</a>
+<a href="/users/profile" class="nav-item">&#9881; Parametres</a>
 </nav>
 <?php $av=$this->request->getSession()->read("Auth.avatar")??"";$avUrl=$av?"/uploads/avatars/".$av:""; ?><div class="sidebar-user"><?php if($avUrl): ?><img src="<?= $avUrl ?>" style="width:36px;height:36px;border-radius:50%;border:2px solid #C8963E;object-fit:cover;flex-shrink:0"><?php else: ?><div class="user-avatar"><?= strtoupper(substr($u,0,1)) ?></div><?php endif; ?><div class="user-info"><div class="user-name"><?= h($u) ?></div><div class="user-role"><?= h($r) ?></div></div><a href="/users/logout" class="btn-deconnect">&#10005;</a></div>
 </div>
