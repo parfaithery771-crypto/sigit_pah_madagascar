@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $session = $this->request->getSession();
 $userName = $session->read("Auth.nom") ?? "Utilisateur";
 $userRole = $session->read("Auth.role") ?? "technicien";
@@ -16,11 +16,14 @@ $userRole = $session->read("Auth.role") ?? "technicien";
 <a href="/interventions" class="nav-item">&#9874; Interventions</a>
 <a href="/livrables" class="nav-item">&#128197; Liste Livraison</a>
 <div class="nav-section">Administration</div>
-<a href="/statistiques" class="nav-item active">Statistiques</a>
+<a href="/beneficiaires" class="nav-item">&#128101; Beneficiaires</a>
+<a href="/materiel" class="nav-item">&#128187; Parc Materiel</a>
+<a href="/rapports" class="nav-item">&#128196; Rapports</a>
+<a href="/statistiques" class="nav-item active">&#128202; Statistiques</a>
 <a href="/users/profile" class="nav-item">&#9881; Parametres</a>
 </nav>
 <div class="sidebar-user">
-<div class="user-avatar"><?= strtoupper(substr($userName,0,1)) ?></div>
+<?php $av=$this->request->getSession()->read("Auth.avatar")??"";$avUrl=$av?"/uploads/avatars/".$av:""; ?><?php if($avUrl): ?><img src="<?= $avUrl ?>" style="width:36px;height:36px;border-radius:50%;border:2px solid #C8963E;object-fit:cover;flex-shrink:0"><?php else: ?><div class="user-avatar"><?= strtoupper(substr($userName,0,1)) ?></div><?php endif; ?>
 <div class="user-info"><div class="user-name"><?= h($userName) ?></div><div class="user-role"><?= h($userRole) ?></div></div>
 <a href="/users/logout" class="btn-deconnect">&#10005;</a>
 </div>
