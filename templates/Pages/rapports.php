@@ -95,7 +95,7 @@ $nb = count($interventionsType);
 <?php if(!empty($interventionsType)): ?>
   <?php foreach($interventionsType as $interv): ?>
   <div style="margin-bottom:0.5rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(200,150,62,0.08)">
-    <div style="color:rgba(250,248,242,0.5);font-size:0.7rem"><?= h($interv->date_intervention) ?> — <?= h($interv->beneficiaire) ?></div>
+    <div style="color:rgba(250,248,242,0.5);font-size:0.7rem"><?= h(is_object($interv->date_intervention) ? $interv->date_intervention->format('d/m/Y') : $interv->date_intervention) ?> — <?= h($interv->beneficiaire) ?></div>
     <?php if(!empty($interv->description_travaux)): ?>
     <div style="color:#5EC878;margin-top:0.2rem">&#9658; <?= h($interv->description_travaux) ?></div>
     <?php else: ?>
