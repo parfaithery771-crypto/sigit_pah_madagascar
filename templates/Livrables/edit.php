@@ -13,7 +13,7 @@
 <div class="nav-section">Compte</div>
 <a href="/users/profile" class="nav-item">&#128100; Mon Profil</a>
 </nav>
-<div class="sidebar-user"><div class="user-avatar"><?= strtoupper(substr($u,0,1)) ?></div><div class="user-info"><div class="user-name"><?= h($u) ?></div><div class="user-role"><?= h($r) ?></div></div><a href="/users/logout" class="btn-deconnect">&#10005;</a></div>
+<?php $av=$this->request->getSession()->read("Auth.avatar")??"";$avUrl=$av?"/uploads/avatars/".$av:""; ?><div class="sidebar-user"><?php if($avUrl): ?><img src="<?= $avUrl ?>" style="width:36px;height:36px;border-radius:50%;border:2px solid #C8963E;object-fit:cover;flex-shrink:0"><?php else: ?><div class="user-avatar"><?= strtoupper(substr($u,0,1)) ?></div><?php endif; ?><div class="user-info"><div class="user-name"><?= h($u) ?></div><div class="user-role"><?= h($r) ?></div></div><a href="/users/logout" class="btn-deconnect">&#10005;</a></div>
 </div>
 <div class="main">
 <div class="topbar"><div class="topbar-title">Modifier Livrable #<?= $livrable->id ?></div><a href="/livrables" class="btn-action">&#8592; Retour</a></div>

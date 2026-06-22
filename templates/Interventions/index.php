@@ -1,4 +1,4 @@
-<?php $s=$this->request->getSession();$u=$s->read("Auth.nom")??"";$r=$s->read("Auth.role")??""; ?>
+<?php $s=$this->request->getSession();$u=$s->read("Auth.nom")??"Utilisateur";$r=$s->read("Auth.role")??""; ?>
 <div class="app">
 <div class="sidebar">
 <div class="sidebar-header"><img src="/img/logo_mincc.png" style="width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(184,150,46,0.4))"><div><div class="sidebar-logo-text">SIGIT</div><div class="sidebar-sub">Ministere du Commerce et de la Consommation</div></div></div>
@@ -11,7 +11,7 @@
 <div class="nav-section">Compte</div>
 <a href="/users/profile" class="nav-item">&#128100; Mon Profil</a>
 </nav>
-<div class="sidebar-user"><div class="user-avatar"><?= strtoupper(substr($u,0,1)) ?></div><div class="user-info"><div class="user-name"><?= h($u) ?></div><div class="user-role"><?= h($r) ?></div></div><a href="/users/logout" class="btn-deconnect">&#10005;</a></div>
+<?php $av=$this->request->getSession()->read("Auth.avatar")??"";$avUrl=$av?"/uploads/avatars/".$av:""; ?><div class="sidebar-user"><?php if($avUrl): ?><img src="<?= $avUrl ?>" style="width:36px;height:36px;border-radius:50%;border:2px solid #C8963E;object-fit:cover;flex-shrink:0"><?php else: ?><div class="user-avatar"><?= strtoupper(substr($u,0,1)) ?></div><?php endif; ?><div class="user-info"><div class="user-name"><?= h($u) ?></div><div class="user-role"><?= h($r) ?></div></div><a href="/users/logout" class="btn-deconnect">&#10005;</a></div>
 </div>
 <div class="main">
 <div class="topbar"><div class="topbar-title">&#128736; Interventions</div><div class="topbar-actions"><a href="/dashboard" class="btn-action">&#8592; Dashboard</a><a href="/interventions/add" class="btn-action" style="background:rgba(45,140,78,0.3)">&#43; Nouvelle</a></div></div>
