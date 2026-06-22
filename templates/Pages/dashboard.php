@@ -41,10 +41,12 @@ body,.dashboard-body{background:radial-gradient(ellipse at top,#1a1200,#000000,#
 <a href="/interventions" class="nav-item">&#9874; Interventions</a>
 <a href="/livrables" class="nav-item">&#128197; Liste Livraison</a>
 <a href="/statistiques" class="nav-item">&#128202; Statistiques</a>
+<?php if($userRole === 'admin'): ?>
 <div class="nav-section">Administration</div>
 <a href="/beneficiaires" class="nav-item">&#128101; Beneficiaires</a>
 <a href="/materiel" class="nav-item">&#128187; Parc Materiel</a>
 <a href="/rapports" class="nav-item">&#128196; Rapports</a>
+<?php endif; ?>
 <a href="/users/profile" class="nav-item">&#9881; Parametres</a>
 </nav>
 <div class="sidebar-user">
