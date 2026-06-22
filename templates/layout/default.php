@@ -283,6 +283,13 @@ input,select,textarea{background:#111100 !important;color:#FAF8F2 !important;bor
 /* Deconnect btn */
 .btn-deconnect{color:rgba(39,174,96,0.7) !important}
 .btn-deconnect:hover{color:#e74c3c !important}
+@media(max-width:768px){
+.buttons-ring{display:flex;flex-direction:column;align-items:center;gap:1rem;padding:1rem 0}
+.btn-circle{width:80px;height:80px}
+.page{padding:1rem 0.5rem}
+.hero h1{font-size:2rem}
+.subtitle{font-size:0.8rem;padding:0 1rem}
+}
 </style>
 </head>
 <body>
