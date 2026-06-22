@@ -1,4 +1,4 @@
-<?php
+ï»¿<?php
 $session = $this->request->getSession();
 $u = $session->read("Auth.nom") ?? "";
 $r = $session->read("Auth.role") ?? "";
@@ -43,7 +43,7 @@ $data = [
 <div class="content">
 <?= $this->Flash->render() ?>
 
-<!-- Cartes résumé -->
+<!-- Cartes rï¿½sumï¿½ -->
 <div class="stats-row">
 <div class="stat-card" style="border-top:2px solid #C8963E"><div class="stat-label">Total</div><div class="stat-value"><?= $total ?></div><div class="stat-sub">Interventions</div><div class="stat-icon">&#9874;</div></div>
 <div class="stat-card" style="border-top:2px solid #2D8C4E"><div class="stat-label">Resolues</div><div class="stat-value"><?= $resolues ?></div><div class="stat-sub">Taux: <?= $taux ?>%</div><div class="stat-icon">&#10003;</div></div>
@@ -75,12 +75,12 @@ $nb = count($interventionsType);
 ?>
 <tr style="border-bottom:1px solid rgba(200,150,62,0.1)">
 
-<!-- Points evoqués -->
+<!-- Points evoquï¿½s -->
 <td style="padding:0.85rem;font-size:0.82rem;color:rgba(250,248,242,0.85);border:1px solid rgba(200,150,62,0.1);vertical-align:top">
 <span style="color:#C8963E;margin-right:0.4rem">&#9679;</span><?= h($row["points"]) ?>
 </td>
 
-<!-- Réalisation -->
+<!-- Rï¿½alisation -->
 <td style="padding:0.85rem;font-size:0.82rem;color:rgba(250,248,242,0.75);border:1px solid rgba(200,150,62,0.1);vertical-align:top;font-style:italic">
 <?= h($row["realisation"]) ?>
 </td>
@@ -95,7 +95,7 @@ $nb = count($interventionsType);
 <?php if(!empty($interventionsType)): ?>
   <?php foreach($interventionsType as $interv): ?>
   <div style="margin-bottom:0.5rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(200,150,62,0.08)">
-    <div style="color:rgba(250,248,242,0.5);font-size:0.7rem"><?= h(is_object($interv->date_intervention) ? $interv->date_intervention->format('d/m/Y') : $interv->date_intervention) ?> — <?= h($interv->beneficiaire) ?></div>
+    <div style="color:rgba(250,248,242,0.5);font-size:0.7rem"><?= h(is_object($interv->date_intervention) ? $interv->date_intervention->format('d/m/Y') : $interv->date_intervention) ?> ï¿½ <?= mb_convert_encoding(h($interv->beneficiaire ?? ''), 'UTF-8', 'UTF-8') ?></div>
     <?php if(!empty($interv->description_travaux)): ?>
     <div style="color:#5EC878;margin-top:0.2rem">&#9658; <?= h($interv->description_travaux) ?></div>
     <?php else: ?>
