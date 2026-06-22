@@ -43,7 +43,7 @@ $avUrl = $av ? "/uploads/avatars/".$av : "";
 <?php foreach($users as $user): ?>
 <tr>
 <td><?= h($user->id) ?></td>
-<td><?= h($user->nom) ?> <?= h($user->prenom ?? '') ?></td>
+<td><?= h($user->nom ?? '-') ?></td>
 <td><?= h($user->email) ?></td>
 <td><span class="badge-etat <?= $user->role === 'admin' ? 'etat-ok' : 'etat-pend' ?>"><?= h($user->role) ?></span></td>
 </tr>
