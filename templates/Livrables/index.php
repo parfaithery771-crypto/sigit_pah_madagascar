@@ -1,4 +1,4 @@
-<?php $s=$this->request->getSession();$u=$s->read("Auth.nom")??"";$r=$s->read("Auth.role")??""; ?>
+﻿<?php $s=$this->request->getSession();$u=$s->read("Auth.nom")??"";$r=$s->read("Auth.role")??""; ?>
 <div class="app">
 <div class="sidebar">
 <div class="sidebar-header"><img src="/img/logo_mincc.png" style="width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(184,150,46,0.4))"><div><div class="sidebar-logo-text">SIGIT</div><div class="sidebar-sub">Ministere du Commerce et de la Consommation</div></div></div>
@@ -8,7 +8,13 @@
 <div class="nav-section">Gestion</div>
 <a href="/interventions" class="nav-item">&#128736; Interventions</a>
 <a href="/livrables" class="nav-item active">&#128197; Livrables</a>
+<div class="nav-section">Administration</div>
+<a href="/beneficiaires" class="nav-item">&#128101; Beneficiaires</a>
+<a href="/materiel" class="nav-item">&#128187; Parc Materiel</a>
+<a href="/rapports" class="nav-item">&#128196; Rapports</a>
+<a href="/statistiques" class="nav-item">&#128202; Statistiques</a>
 <div class="nav-section">Compte</div>
+<a href="/users/profile" class="nav-item">&#9881; Parametres</a>
 <a href="/users/profile" class="nav-item">&#128100; Mon Profil</a>
 </nav>
 <?php $av=$this->request->getSession()->read("Auth.avatar")??"";$avUrl=$av?"/uploads/avatars/".$av:""; ?><div class="sidebar-user"><?php if($avUrl): ?><img src="<?= $avUrl ?>" style="width:36px;height:36px;border-radius:50%;border:2px solid #C8963E;object-fit:cover;flex-shrink:0"><?php else: ?><div class="user-avatar"><?= strtoupper(substr($u,0,1)) ?></div><?php endif; ?><div class="user-info"><div class="user-name"><?= h($u) ?></div><div class="user-role"><?= h($r) ?></div></div><a href="/users/logout" class="btn-deconnect">&#10005;</a></div>
