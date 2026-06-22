@@ -136,7 +136,7 @@ class UsersController extends AppController
                 $uploadPath = WWW_ROOT . "uploads" . DS . "avatars" . DS . $filename;
                 $file->moveTo($uploadPath);
                 $Users = $this->getTableLocator()->get("Users");
-                $user = $Users->get($userId);
+                $user = $Users->find()->where(['id' => $userId])->first(); if (!$user) return $this->redirect('/users/profile');
                 $old = $user->avatar ?? "";
                 if ($old && file_exists(WWW_ROOT . "uploads" . DS . "avatars" . DS . $old)) {
                     unlink(WWW_ROOT . "uploads" . DS . "avatars" . DS . $old);
