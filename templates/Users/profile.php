@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $session = $this->request->getSession();
 $u = $session->read("Auth.nom") ?? "";
 $r = $session->read("Auth.role") ?? "";
@@ -30,7 +30,6 @@ $avatarUrl = $avatar ? "/uploads/avatars/" . $avatar : "";
 <div class="user-avatar"><?= strtoupper(substr($u,0,1)) ?></div>
 <?php endif; ?>
 <div class="user-info"><div class="user-name"><?= h($u) ?></div><div class="user-role"><?= h($r) ?></div></div>
-<div class="user-info"><div class="user-name"><?= h($u) ?></div><div class="user-role"><?= h($r) ?></div></div>
 <a href="/users/logout" class="btn-deconnect">&#10005;</a>
 </div>
 </div>
@@ -53,21 +52,35 @@ $avatarUrl = $avatar ? "/uploads/avatars/" . $avatar : "";
 <form action="/users/upload-avatar" method="post" enctype="multipart/form-data" style="width:100%">
 <div style="margin-bottom:0.75rem">
 <label style="display:block;font-size:0.7rem;color:#C8963E;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.1em">Choisir une photo</label>
-<input type="file" name="avatar" accept="image/*" onchange="previewImage(this)" style="width:100%;background:rgba(250,248,242,0.04);border:1px solid rgba(200,150,62,0.3);border-radius:6px;padding:0.5rem;color:#FAF8F2;font-size:0.8rem">
+<input type="file" name="avatar" accept="image/*" onchange="previewImage(this)" style="width:100%;background:rgba(250,248,242,0.04);border:1px solid rgba(200,150,62,0.3);border-radius:6px;padding:0.5rem;color:#FAF8F2;font-size:0.8rem;box-sizing:border-box">
 </div>
 <button type="submit" class="btn-submit" style="width:100%">&#128247; Mettre a jour</button>
 </form>
-<div style="font-size:0.7rem;color:rgba(250,248,242,0.3);text-align:center">JPG, PNG, GIF — Max 2MB</div>
+<div style="font-size:0.7rem;color:rgba(250,248,242,0.3);text-align:center">JPG, PNG, GIF - Max 2MB</div>
 </div>
 </div>
 <div style="display:flex;flex-direction:column;gap:1.25rem">
 <div class="panel">
 <div class="panel-header"><div class="panel-title">&#128100; Informations du compte</div></div>
 <div class="panel-body">
-<div class="param-row"><span class="pr-label">Nom</span><span class="pr-val"><?= h($user->nom) ?></span></div>
-<div class="param-row"><span class="pr-label">Prenom</span><span class="pr-val"><?= h($user->prenom ?? "-") ?></span></div>
-<div class="param-row"><span class="pr-label">Email</span><span class="pr-val"><?= h($user->email) ?></span></div>
-<div class="param-row"><span class="pr-label">Role</span><span class="pr-val"><?= h($user->role) ?></span></div>
+<table style="width:100%;border-collapse:collapse">
+<tr style="border-bottom:1px solid rgba(200,150,62,0.1)">
+<td style="padding:0.7rem;color:rgba(250,248,242,0.5);font-size:0.8rem;width:35%">Nom</td>
+<td style="padding:0.7rem;color:#FAF8F2"><?= h($user->nom ?? '-') ?></td>
+</tr>
+<tr style="border-bottom:1px solid rgba(200,150,62,0.1)">
+<td style="padding:0.7rem;color:rgba(250,248,242,0.5);font-size:0.8rem">Prenom</td>
+<td style="padding:0.7rem;color:#FAF8F2"><?= h($user->prenom ?? '-') ?></td>
+</tr>
+<tr style="border-bottom:1px solid rgba(200,150,62,0.1)">
+<td style="padding:0.7rem;color:rgba(250,248,242,0.5);font-size:0.8rem">Email</td>
+<td style="padding:0.7rem;color:#FAF8F2;word-break:break-all"><?= h($user->email ?? '-') ?></td>
+</tr>
+<tr>
+<td style="padding:0.7rem;color:rgba(250,248,242,0.5);font-size:0.8rem">Role</td>
+<td style="padding:0.7rem;color:#C8963E"><?= h($user->role ?? '-') ?></td>
+</tr>
+</table>
 </div>
 </div>
 <div class="panel">
