@@ -86,7 +86,7 @@ body,.dashboard-body{background:radial-gradient(ellipse at top,#1a1200,#000000,#
 <option value="resolution_probleme">Maintenance 1er degre des materiels TIC</option>
 <option value="installation_configuration">Installation et configuration des materiels</option>
 <option value="restoration_mise_a_niveau">Restitution et mise a niveau des logiciels</option>
-<option value="supervision_fonctionnement">Maintenance preventive et curative</option>
+<option value="maintenance_preventive_curative">Maintenance preventive et curative</option>
 <option value="supervision_analyse_pannes">Supervision et analyse des pannes</option>
 </select></div>
 <div class="field" style="margin-bottom:0.5rem"><label>&#128295; Travaux effectues *</label>

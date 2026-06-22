@@ -72,16 +72,22 @@ class InterventionsController extends AppController
     }
 
     public function delete($id = null)
-    {
-        $redirect = $this->requireLogin();
-        if ($redirect) return $redirect;
+{
+    $redirect = $this->requireLogin();
+    if ($redirect) return $redirect;
+    try {
         $Interventions = $this->getTableLocator()->get('Interventions');
-        $intervention = $Interventions->get($id);
-        if ($Interventions->delete($intervention)) {
+        $intervention = $Interventions->find()->where(['id' => $id])->first();
+        if ($intervention && $Interventions->delete($intervention)) {
             $this->Flash->success('Intervention supprimee.');
+        } else {
+            $this->Flash->error('Intervention introuvable.');
         }
-        return $this->redirect('/dashboard');
+    } catch (\Exception $e) {
+        $this->Flash->error('Erreur: ' . $e->getMessage());
     }
+    return $this->redirect('/dashboard');
+}
 
     public function view($id = null)
     {
