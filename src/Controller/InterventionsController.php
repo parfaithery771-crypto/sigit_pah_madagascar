@@ -8,6 +8,23 @@ class InterventionsController extends AppController
         $redirect = $this->requireLogin();
         if ($redirect) return $redirect;
         try {
+    if ($Interventions->save($intervention)) {
+        // Mamorona livrable automatique
+        $Livrables = $this->getTableLocator()->get('Livrables');
+        $livrable = $Livrables->newEntity([
+            'date_livraison'  => $data['date_intervention'],
+            'etat'            => 'en_attente',
+            'direction'       => $data['beneficiaire'] ?? '',
+            'intervention_id' => $intervention->id,
+        ]);
+        $Livrables->save($livrable);
+        $this->Flash->success('Intervention ajoutee avec succes.');
+    } else {
+        $this->Flash->error('Erreur: ' . json_encode($intervention->getErrors()));
+    }
+} catch (\Exception $e) {
+    $this->Flash->error('Exception: ' . $e->getMessage());
+}
             $Interventions = $this->getTableLocator()->get('Interventions');
             $interventions = $Interventions->find()->orderBy(['Interventions.id' => 'DESC'])->toArray();
             $this->set('interventions', $interventions);
