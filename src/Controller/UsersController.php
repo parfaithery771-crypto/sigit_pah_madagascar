@@ -1,4 +1,4 @@
-<?php
+public function profile()<?php
 declare(strict_types=1);
 namespace App\Controller;
 class UsersController extends AppController
@@ -73,19 +73,19 @@ class UsersController extends AppController
         $this->render("/Pages/home");
     }
 
-    public function profile()
-    {
-        $redirect = $this->requireLogin();
-        if ($redirect) return $redirect;
-        $session = $this->request->getSession();
-        $Users = $this->getTableLocator()->get("Users");
-        $userId = $session->read("Auth.id");
-        if (!$userId) return $this->redirect("/");
-        $user = $Users->find()->where(["id" => $userId])->first();
-        if (!$user) return $this->redirect("/users/logout");
-        $session->write("Auth.avatar", $user->avatar ?? "");
-        $this->set("user", $user);
-    }
+      public function profile()
+{
+    $redirect = $this->requireLogin();
+    if ($redirect) return $redirect;
+    $session = $this->request->getSession();
+    $userId = $session->read('Auth.id');
+    if (!$userId) return $this->redirect('/');
+    $Users = $this->getTableLocator()->get('Users');
+    $user = $Users->find()->where(['id' => $userId])->first();
+    if (!$user) return $this->redirect('/users/logout');
+    $session->write('Auth.avatar', $user->avatar ?? '');
+    $this->set('user', $user);
+}
 
     public function changePassword()
     {

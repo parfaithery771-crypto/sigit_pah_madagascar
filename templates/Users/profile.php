@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $session = $this->request->getSession();
 $u = $session->read("Auth.nom") ?? "";
 $r = $session->read("Auth.role") ?? "";
