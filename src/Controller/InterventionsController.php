@@ -4,22 +4,21 @@ namespace App\Controller;
 class InterventionsController extends AppController
 {
     public function index()
-{
-    $redirect = $this->requireLogin();
-    if ($redirect) return $redirect;
-    try {
-        $Interventions = $this->getTableLocator()->get('Interventions');
-        if ($this->isAdmin()) {
-            $interventions = $Interventions->find()->orderBy(['Interventions.id' => 'DESC'])->toArray();
-        } else {
-            $interventions = $Interventions->find()->where(['user_id' => $this->currentUserId()])->orderBy(['Interventions.id' => 'DESC'])->toArray();
+    {
+        $redirect = $this->requireLogin();
+        if ($redirect) return $redirect;
+        try {
+            $Interventions = $this->getTableLocator()->get('Interventions');
+            if ($this->isAdmin()) {
+                $interventions = $Interventions->find()->orderBy(['Interventions.id' => 'DESC'])->toArray();
+            } else {
+                $interventions = $Interventions->find()->where(['user_id' => $this->currentUserId()])->orderBy(['Interventions.id' => 'DESC'])->toArray();
+            }
+            $this->set('interventions', $interventions);
+        } catch (\Exception $e) {
+            $this->Flash->error('Erreur: ' . $e->getMessage());
+            $this->set('interventions', []);
         }
-        $this->set('interventions', $interventions);
-    } catch (\Exception $e) {
-        $this->Flash->error('Erreur: ' . $e->getMessage());
-        $this->set('interventions', []);
-    }
-}        }
     }
 
     public function add()
@@ -63,6 +62,10 @@ class InterventionsController extends AppController
                 $this->Flash->error('Intervention introuvable.');
                 return $this->redirect('/dashboard');
             }
+            if (!$this->isAdmin() && $intervention->user_id !== $this->currentUserId()) {
+                $this->Flash->error('Acces refuse.');
+                return $this->redirect('/dashboard');
+            }
             if ($this->request->is(['post', 'put'])) {
                 $data = $this->request->getData();
                 $intervention = $Interventions->patchEntity($intervention, [
@@ -93,12 +96,16 @@ class InterventionsController extends AppController
         try {
             $Interventions = $this->getTableLocator()->get('Interventions');
             $intervention = $Interventions->find()->where(['Interventions.id' => (int)$id])->first();
-            if ($intervention) {
-                $Interventions->delete($intervention);
-                $this->Flash->success('Intervention supprimee.');
-            } else {
+            if (!$intervention) {
                 $this->Flash->error('Intervention introuvable.');
+                return $this->redirect('/dashboard');
             }
+            if (!$this->isAdmin() && $intervention->user_id !== $this->currentUserId()) {
+                $this->Flash->error('Acces refuse.');
+                return $this->redirect('/dashboard');
+            }
+            $Interventions->delete($intervention);
+            $this->Flash->success('Intervention supprimee.');
         } catch (\Exception $e) {
             $this->Flash->error('Erreur: ' . $e->getMessage());
         }
