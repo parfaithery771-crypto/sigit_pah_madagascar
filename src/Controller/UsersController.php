@@ -12,7 +12,7 @@ class UsersController extends AppController
             if (empty($email) || empty($password)) {
                 $this->Flash->error("Remplissez tous les champs.");
                 return;
-            }
+            
             $Users = $this->getTableLocator()->get("Users");
             $user = $Users->find()->where(["email" => $email])->first();
             if ($user && password_verify($password, $user->password)) {
