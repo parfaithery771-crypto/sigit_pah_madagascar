@@ -12,7 +12,7 @@ class UsersController extends AppController
             if (empty($email) || empty($password)) {
                 $this->Flash->error("Remplissez tous les champs.");
                 return;
-            
+            }
             $Users = $this->getTableLocator()->get("Users");
             $user = $Users->find()->where(["email" => $email])->first();
             if ($user && password_verify($password, $user->password)) {
@@ -73,19 +73,19 @@ class UsersController extends AppController
         $this->render("/Pages/home");
     }
 
-      public function profile()
-{
-    $redirect = $this->requireLogin();
-    if ($redirect) return $redirect;
-    $session = $this->request->getSession();
-    $userId = $session->read('Auth.id');
-    if (!$userId) return $this->redirect('/');
-    $Users = $this->getTableLocator()->get('Users');
-    $user = $Users->find()->where(['id' => $userId])->first();
-    if (!$user) return $this->redirect('/users/logout');
-    $session->write('Auth.avatar', $user->avatar ?? '');
-    $this->set('user', $user);
-}
+    public function profile()
+    {
+        $redirect = $this->requireLogin();
+        if ($redirect) return $redirect;
+        $session = $this->request->getSession();
+        $userId = $session->read("Auth.id");
+        if (!$userId) return $this->redirect("/");
+        $Users = $this->getTableLocator()->get("Users");
+        $user = $Users->find()->where(["id" => $userId])->first();
+        if (!$user) return $this->redirect("/users/logout");
+        $session->write("Auth.avatar", $user->avatar ?? "");
+        $this->set("user", $user);
+    }
 
     public function changePassword()
     {
@@ -175,6 +175,15 @@ class UsersController extends AppController
         return $this->redirect("/");
     }
 
+    public function index()
+    {
+        $redirect = $this->requireAdmin();
+        if ($redirect) return $redirect;
+        $Users = $this->getTableLocator()->get("Users");
+        $users = $Users->find()->orderBy(["id" => "DESC"])->toArray();
+        $this->set("users", $users);
+    }
+
     public function testlogin()
     {
         $this->autoRender = false;
@@ -187,12 +196,4 @@ class UsersController extends AppController
         echo "SESSION OK! <a href=/dashboard>=> Dashboard</a>";
         exit;
     }
-}
-public function index()
-{
-    $redirect = $this->requireAdmin();
-    if ($redirect) return $redirect;
-    $Users = $this->getTableLocator()->get('Users');
-    $users = $Users->find()->orderBy(['id' => 'DESC'])->toArray();
-    $this->set('users', $users);
 }
