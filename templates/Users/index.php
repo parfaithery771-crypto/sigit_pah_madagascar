@@ -46,12 +46,15 @@ $others = array_filter($users, fn($u) => ($u->status ?? 'approved') !== 'pending
 <tbody>
 <?php foreach($pending as $user): ?>
 <tr>
-<td><?= h($user->nom) ?></td>
-<td><?= h($user->email) ?></td>
-<td style="font-size:0.75rem"><?= h($user->created) ?></td>
-<td style="display:flex;gap:0.4rem">
-<a href="/admin/users/approve/<?= $user->id ?>" class="btn-action" style="background:rgba(45,140,78,0.3);color:#5EC878;font-size:0.75rem" onclick="return confirm('Approuver cet utilisateur ?')">&#10003; Approuver</a>
-<a href="/admin/users/refuse/<?= $user->id ?>" class="btn-action" style="color:#E06060;font-size:0.75rem" onclick="return confirm('Refuser cet utilisateur ?')">&#10007; Refuser</a>
+<td>
+<?php $st = $user->status ?? 'approved'; ?>
+<?php if($st === 'approved'): ?>
+<span class="badge-etat etat-ok">&#10003; Approuve</span>
+<?php elseif($st === 'pending'): ?>
+<span class="badge-etat etat-pend">&#9203; En attente</span>
+<?php else: ?>
+<span class="badge-etat etat-late">&#10007; Refuse</span>
+<?php endif; ?>
 </td>
 </tr>
 <?php endforeach; ?>
