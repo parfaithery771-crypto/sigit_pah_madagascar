@@ -102,34 +102,30 @@ class UsersController extends AppController
                 $user->reset_expires = $expires;
                 $Users->save($user);
                 try {
+                    $gmailUser = env("GMAIL_USER", "parfaithery771@gmail.com");
+                    $gmailPass = env("GMAIL_PASS", "bbyyicypfixpdnpa");
                     $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
                     $mail->isSMTP();
-                    $mail->Host = "smtp.gmail.com";
-                    $mail->SMTPAuth = true;
-                    $mail->Username = getenv("GMAIL_USER") ?: "parfaithery771@gmail.com";
-                    $mail->Password = getenv("GMAIL_PASS") ?: "bbyyicypfixpdnpa";
-                    $mail->SMTPSecure = "tls";
-                    $mail->Port = 587;
-                    $mail->setFrom(getenv("GMAIL_USER") ?: "parfaithery771@gmail.com", "SIGIT");
+                    $mail->Host       = "smtp.gmail.com";
+                    $mail->SMTPAuth   = true;
+                    $mail->Username   = $gmailUser;
+                    $mail->Password   = $gmailPass;
+                    $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+                    $mail->Port       = 587;
+                    $mail->CharSet    = "UTF-8";
+                    $mail->setFrom($gmailUser, "SIGIT");
                     $mail->addAddress($email, $user->nom);
                     $mail->isHTML(true);
                     $mail->Subject = "Code de reinitialisation SIGIT";
-                    $mail->Body = "<div style=\"font-family:Arial,sans-serif;max-width:500px;margin:0 auto;background:#1a1200;color:#FAF8F2;padding:2rem;border-radius:12px;border:1px solid rgba(200,150,62,0.3)\">
-                        <h2 style=\"color:#C8963E;text-align:center\">SIGIT - Reset Password</h2>
-                        <p>Bonjour <b>{$user->nom}</b>,</p>
-                        <p>Voici votre code de reinitialisation :</p>
-                        <div style=\"text-align:center;font-size:2.5rem;font-weight:bold;color:#C8963E;background:rgba(200,150,62,0.1);padding:1rem;border-radius:8px;letter-spacing:0.5rem;margin:1rem 0\">{$code}</div>
-                        <p style=\"color:rgba(250,248,242,0.6);font-size:0.85rem\">Ce code expire dans <b>15 minutes</b>.</p>
-                        <p style=\"color:rgba(250,248,242,0.6);font-size:0.85rem\">Si vous n avez pas demande cette reinitialisation, ignorez cet email.</p>
-                        <hr style=\"border-color:rgba(200,150,62,0.2)\">
-                        <p style=\"text-align:center;color:rgba(250,248,242,0.4);font-size:0.75rem\">Ministere du Commerce et de la Consommation - Madagascar</p>
-                    </div>";
+                    $mail->Body    = "<div style=\"font-family:Arial,sans-serif;max-width:500px;margin:0 auto;background:#1a1200;color:#FAF8F2;padding:2rem;border-radius:12px;border:1px solid rgba(200,150,62,0.3)\"><h2 style=\"color:#C8963E;text-align:center\">SIGIT - Reset Password</h2><p>Bonjour <b>{$user->nom}</b>,</p><p>Voici votre code de reinitialisation :</p><div style=\"text-align:center;font-size:2.5rem;font-weight:bold;color:#C8963E;background:rgba(200,150,62,0.1);padding:1rem;border-radius:8px;letter-spacing:0.5rem;margin:1rem 0\">{$code}</div><p style=\"color:rgba(250,248,242,0.6);font-size:0.85rem\">Ce code expire dans <b>15 minutes</b>.</p><p style=\"color:rgba(250,248,242,0.6);font-size:0.85rem\">Si vous n avez pas demande cette reinitialisation, ignorez cet email.</p><hr style=\"border-color:rgba(200,150,62,0.2)\"><p style=\"text-align:center;color:rgba(250,248,242,0.4);font-size:0.75rem\">Ministere du Commerce et de la Consommation - Madagascar</p></div>";
+                    $mail->AltBody = "Votre code SIGIT : {$code} (expire dans 15 minutes)";
                     $mail->send();
                     $this->request->getSession()->write("reset_email", $email);
                     $this->Flash->success("Code envoye a " . $email . " ! Verifiez votre boite mail.");
                     return $this->redirect("/users/reset-code");
                 } catch (\Exception $e) {
                     $this->Flash->error("Erreur envoi email: " . $e->getMessage());
+                    return $this->redirect("/");
                 }
             } else {
                 $this->Flash->success("Si cet email existe, un code a ete envoye.");
@@ -169,7 +165,7 @@ class UsersController extends AppController
             return $this->redirect("/users/forgot");
         }
         if ($this->request->is("post")) {
-            $pwd = $this->request->getData("password") ?? "";
+            $pwd     = $this->request->getData("password") ?? "";
             $confirm = $this->request->getData("confirm") ?? "";
             if (strlen($pwd) < 8 || !preg_match("/[A-Z]/", $pwd) || !preg_match("/[0-9]/", $pwd) || !preg_match("/[^a-zA-Z0-9]/", $pwd)) {
                 $this->Flash->error("Mot de passe trop faible (8 car. min, majuscule, chiffre, special).");
@@ -181,10 +177,10 @@ class UsersController extends AppController
             }
             $email = $this->request->getSession()->read("reset_email");
             $Users = $this->getTableLocator()->get("Users");
-            $user = $Users->find()->where(["email" => $email])->first();
+            $user  = $Users->find()->where(["email" => $email])->first();
             if ($user) {
-                $user->password = password_hash($pwd, PASSWORD_DEFAULT);
-                $user->reset_token = null;
+                $user->password      = password_hash($pwd, PASSWORD_DEFAULT);
+                $user->reset_token   = null;
                 $user->reset_expires = null;
                 $Users->save($user);
                 $this->request->getSession()->delete("reset_email");
@@ -200,10 +196,10 @@ class UsersController extends AppController
         $redirect = $this->requireLogin();
         if ($redirect) return $redirect;
         $session = $this->request->getSession();
-        $userId = $session->read("Auth.id");
+        $userId  = $session->read("Auth.id");
         if (!$userId) return $this->redirect("/");
         $Users = $this->getTableLocator()->get("Users");
-        $user = $Users->find()->where(["id" => $userId])->first();
+        $user  = $Users->find()->where(["id" => $userId])->first();
         if (!$user) return $this->redirect("/users/logout");
         $session->write("Auth.avatar", $user->avatar ?? "");
         $this->set("user", $user);
@@ -214,8 +210,8 @@ class UsersController extends AppController
         $redirect = $this->requireLogin();
         if ($redirect) return $redirect;
         if ($this->request->is("post")) {
-            $data = $this->request->getData();
-            $newPwd = $data["new_password"] ?? "";
+            $data       = $this->request->getData();
+            $newPwd     = $data["new_password"] ?? "";
             $confirmPwd = $data["confirm_password"] ?? "";
             if (empty($newPwd) || strlen($newPwd) < 8) {
                 $this->Flash->error("Mot de passe trop court (min 8 caracteres).");
@@ -238,8 +234,8 @@ class UsersController extends AppController
                 return $this->redirect("/users/profile");
             }
             $session = $this->request->getSession();
-            $Users = $this->getTableLocator()->get("Users");
-            $userId = $session->read("Auth.id");
+            $Users   = $this->getTableLocator()->get("Users");
+            $userId  = $session->read("Auth.id");
             if (!$userId) return $this->redirect("/");
             $user = $Users->find()->where(["id" => $userId])->first();
             if (!$user) return $this->redirect("/users/logout");
@@ -261,8 +257,8 @@ class UsersController extends AppController
             if ($this->request->is("post")) {
                 $file = $this->request->getUploadedFile("avatar");
                 if ($file && $file->getError() === UPLOAD_ERR_OK) {
-                    $ext = strtolower(pathinfo($file->getClientFilename(), PATHINFO_EXTENSION));
-                    $allowed = ["jpg","jpeg","png","gif","webp"];
+                    $ext     = strtolower(pathinfo($file->getClientFilename(), PATHINFO_EXTENSION));
+                    $allowed = ["jpg", "jpeg", "png", "gif", "webp"];
                     if (!in_array($ext, $allowed)) {
                         $this->Flash->error("Format non supporte. Utilisez JPG ou PNG.");
                         return $this->redirect("/users/profile");
@@ -271,9 +267,9 @@ class UsersController extends AppController
                         $this->Flash->error("Image trop grande. Maximum 2MB.");
                         return $this->redirect("/users/profile");
                     }
-                    $session = $this->request->getSession();
-                    $userId = $session->read("Auth.id");
-                    $filename = "avatar_" . $userId . "_" . time() . "." . $ext;
+                    $session   = $this->request->getSession();
+                    $userId    = $session->read("Auth.id");
+                    $filename  = "avatar_" . $userId . "_" . time() . "." . $ext;
                     $uploadDir = WWW_ROOT . "uploads" . DS . "avatars";
                     if (!is_dir($uploadDir)) {
                         mkdir($uploadDir, 0777, true);
@@ -281,7 +277,7 @@ class UsersController extends AppController
                     $uploadPath = $uploadDir . DS . $filename;
                     $file->moveTo($uploadPath);
                     $Users = $this->getTableLocator()->get("Users");
-                    $user = $Users->find()->where(["id" => $userId])->first();
+                    $user  = $Users->find()->where(["id" => $userId])->first();
                     if (!$user) return $this->redirect("/users/profile");
                     $old = $user->avatar ?? "";
                     if ($old && file_exists($uploadDir . DS . $old)) {
@@ -323,7 +319,7 @@ class UsersController extends AppController
         $redirect = $this->requireAdmin();
         if ($redirect) return $redirect;
         $Users = $this->getTableLocator()->get("Users");
-        $user = $Users->find()->where(["id" => $id])->first();
+        $user  = $Users->find()->where(["id" => $id])->first();
         if ($user) {
             $user->status = "approved";
             $Users->save($user);
@@ -337,7 +333,7 @@ class UsersController extends AppController
         $redirect = $this->requireAdmin();
         if ($redirect) return $redirect;
         $Users = $this->getTableLocator()->get("Users");
-        $user = $Users->find()->where(["id" => $id])->first();
+        $user  = $Users->find()->where(["id" => $id])->first();
         if ($user) {
             $user->status = "refused";
             $Users->save($user);
@@ -346,22 +342,41 @@ class UsersController extends AppController
         return $this->redirect("/admin/users");
     }
 
-  public function delete($id = null)
-{
-    $redirect = $this->requireAdmin();
-    if ($redirect) return $redirect;
-    $Users = $this->getTableLocator()->get("Users");
-    $user = $Users->find()->where(["id" => $id])->first();
-    if ($user) {
-        if ($user->role === "admin") {
-            $this->Flash->error("Impossible de supprimer un administrateur.");
-            return $this->redirect("/admin/users");
+    public function delete($id = null)
+    {
+        $redirect = $this->requireAdmin();
+        if ($redirect) return $redirect;
+        $Users = $this->getTableLocator()->get("Users");
+        $user  = $Users->find()->where(["id" => $id])->first();
+        if ($user) {
+            if ($user->role === "admin") {
+                $this->Flash->error("Impossible de supprimer un administrateur.");
+                return $this->redirect("/admin/users");
+            }
+            $Users->delete($user);
+            $this->Flash->success("Utilisateur supprime.");
         }
-        $Users->delete($user);
-        $this->Flash->success("Utilisateur supprime.");
+        return $this->redirect("/admin/users");
     }
-    return $this->redirect("/admin/users");
-}  public function testlogin()
+
+    public function pendingCount()
+    {
+        $this->autoRender = false;
+        if (!$this->isLoggedIn() || !$this->isAdmin()) {
+            echo json_encode(["count" => 0]);
+            return;
+        }
+        try {
+            $Users = $this->getTableLocator()->get("Users");
+            $count = $Users->find()->where(["status" => "pending"])->count();
+        } catch (\Exception $e) {
+            $count = 0;
+        }
+        $this->response = $this->response->withType("application/json");
+        echo json_encode(["count" => $count]);
+    }
+
+    public function testlogin()
     {
         $this->autoRender = false;
         $session = $this->request->getSession();
