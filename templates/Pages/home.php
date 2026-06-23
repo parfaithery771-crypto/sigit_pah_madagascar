@@ -55,9 +55,12 @@
     <form action="/users/login" method="post">
       <div class="form-group"><label>Email</label><input type="email" name="email" placeholder="votre@email.mg" required></div>
       <div class="form-group"><label>Mot de passe</label><input type="password" name="password" placeholder="........" required></div>
-      <input type="submit" value="Se Connecter" class="btn-login" style="background:linear-gradient(135deg,#1a5c2e,#2D8C4E,#4caf50) !important;color:#ffffff !important;border:2px solid rgba(45,140,78,0.8) !important;font-weight:800 !important;box-shadow:0 4px 20px rgba(45,140,78,0.55) !important">
+      <input type="submit" value="SE CONNECTER" class="btn-login" style="background:linear-gradient(135deg,#1a5c2e,#2D8C4E,#4caf50) !important;color:#ffffff !important;border:2px solid rgba(45,140,78,0.8) !important;font-weight:800 !important;box-shadow:0 4px 20px rgba(45,140,78,0.55) !important">
     </form>
-    <div style="margin-top:1rem">
+    <div style="text-align:center;margin:0.75rem 0">
+  <a onclick="showOv('forgot')" style="color:rgba(200,150,62,0.7);font-size:0.78rem;text-decoration:none;cursor:pointer">&#128274; Mot de passe oublie ?</a>
+    </div>
+    <div style="margin-top:0.5rem">
       <button class="btn-inscrire" style="background:linear-gradient(135deg,#1a5c2e,#2D8C4E,#4caf50) !important;color:#ffffff !important;border:2px solid rgba(45,140,78,0.7) !important;font-weight:800 !important;box-shadow:0 4px 20px rgba(45,140,78,0.45) !important" onclick="showOv('inscrire')">&#10010; S inscrire</button>
     </div>
   </div>
@@ -120,6 +123,22 @@
     <div class="aide-q"><div class="aq-q">Comment creer une intervention ?</div><div class="aq-a">Connectez-vous puis utilisez le formulaire sur le tableau de bord.</div></div>
     <div class="aide-q"><div class="aq-q">Comment voir les statistiques ?</div><div class="aq-a">Le dashboard affiche les graphiques depuis la base de donnees.</div></div>
     <div class="aide-q"><div class="aq-q">Mot de passe oublie ?</div><div class="aq-a">Contactez: dsi@mnc.gov.mg</div></div>
+  </div>
+</div><div id="ov-forgot" onclick="if(event.target===this)closeOv()" style="position:fixed;inset:0;background:rgba(10,6,0,0.97);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(8px)">
+  <div style="background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(10,6,0,0.97));border:1px solid rgba(200,150,62,0.25);border-radius:16px;padding:2.5rem;width:min(420px,90vw);position:relative">
+    <button onclick="closeOv()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(250,248,242,0.4);font-size:1.2rem;cursor:pointer">&#10005;</button>
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <h2 style="color:var(--or)">&#128274; Mot de passe oublie</h2>
+      <p style="color:rgba(250,248,242,0.5);font-size:0.75rem">Entrez votre email pour recevoir un code</p>
+    </div>
+    <?= $this->Flash->render() ?>
+    <form action="/users/forgot" method="post">
+      <div class="form-group"><label>Email</label><input type="email" name="email" placeholder="votre@email.mg" required></div>
+      <input type="submit" value="Envoyer le code" class="btn-login" style="background:linear-gradient(135deg,#964B00,#C8963E) !important;color:#ffffff !important;border:2px solid rgba(200,150,62,0.8) !important;font-weight:800 !important">
+    </form>
+    <div style="text-align:center;margin-top:1rem">
+      <a onclick="showOv('login')" style="cursor:pointer;font-size:0.75rem;color:rgba(250,248,242,0.45)">&#8592; Retour a la connexion</a>
+    </div>
   </div>
 </div>
 
