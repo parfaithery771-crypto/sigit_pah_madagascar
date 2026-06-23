@@ -4,39 +4,39 @@ namespace App\Controller;
 class UsersController extends AppController
 {
     public function login()
-    if (!$this->request->is("post")) {
-    return $this->redirect("/");
-} {
-            $data = $this->request->getData();
-            $email = trim($data["email"] ?? "");
-            $password = $data["password"] ?? "";
-            if (empty($email) || empty($password)) {
-                $this->Flash->error("Remplissez tous les champs.");
-                return;
-            }
-            $Users = $this->getTableLocator()->get("Users");
-            $user = $Users->find()->where(["email" => $email])->first();
-            if ($user && password_verify($password, $user->password)) {
-                if (($user->status ?? "approved") === "pending") {
-                    $this->Flash->error("Votre compte est en attente d approbation par l administrateur.");
-                    return $this->redirect("/");
-                }
-                if (($user->status ?? "approved") === "refused") {
-                    $this->Flash->error("Votre demande a ete refusee. Contactez l administrateur.");
-                    return $this->redirect("/");
-                }
-                $session = $this->request->getSession();
-                $session->write("Auth.id", $user->id);
-                $session->write("Auth.nom", $user->nom);
-                $session->write("Auth.email", $user->email);
-                $session->write("Auth.role", $user->role);
-                $session->write("Auth.loggedIn", true);
-                $session->write("Auth.avatar", $user->avatar ?? "");
-                return $this->redirect("/dashboard");
-            }
-            $this->Flash->error("Email ou mot de passe incorrect.");
-            return;
+    {
+        if (!$this->request->is("post")) {
+            return $this->redirect("/");
         }
+        $data = $this->request->getData();
+        $email = trim($data["email"] ?? "");
+        $password = $data["password"] ?? "";
+        if (empty($email) || empty($password)) {
+            $this->Flash->error("Remplissez tous les champs.");
+            return $this->redirect("/");
+        }
+        $Users = $this->getTableLocator()->get("Users");
+        $user = $Users->find()->where(["email" => $email])->first();
+        if ($user && password_verify($password, $user->password)) {
+            if (($user->status ?? "approved") === "pending") {
+                $this->Flash->error("Votre compte est en attente d approbation par l administrateur.");
+                return $this->redirect("/");
+            }
+            if (($user->status ?? "approved") === "refused") {
+                $this->Flash->error("Votre demande a ete refusee. Contactez l administrateur.");
+                return $this->redirect("/");
+            }
+            $session = $this->request->getSession();
+            $session->write("Auth.id", $user->id);
+            $session->write("Auth.nom", $user->nom);
+            $session->write("Auth.email", $user->email);
+            $session->write("Auth.role", $user->role);
+            $session->write("Auth.loggedIn", true);
+            $session->write("Auth.avatar", $user->avatar ?? "");
+            return $this->redirect("/dashboard");
+        }
+        $this->Flash->error("Email ou mot de passe incorrect.");
+        return $this->redirect("/");
     }
 
     public function register()
@@ -44,7 +44,6 @@ class UsersController extends AppController
         if ($this->request->is("post")) {
             $data = $this->request->getData();
             $password = $data["password"] ?? "";
-
             if (strlen($password) < 8) {
                 $this->Flash->error("Le mot de passe doit contenir au moins 8 caracteres.");
                 return $this->redirect("/");
@@ -61,7 +60,6 @@ class UsersController extends AppController
                 $this->Flash->error("Le mot de passe doit contenir au moins un caractere special.");
                 return $this->redirect("/");
             }
-
             $Users = $this->getTableLocator()->get("Users");
             $existing = $Users->find()->where(["email" => $data["email"]])->first();
             if ($existing) {
