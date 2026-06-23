@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>SIGIT - Repoblikan i Madagasikara</title>
 <style>
+.message.success{position:fixed;top:1rem;left:50%;transform:translateX(-50%);background:rgba(45,140,78,0.95);color:#fff;padding:1rem 2rem;border-radius:8px;z-index:9999;font-size:0.9rem;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.5)}
+.message.error{position:fixed;top:1rem;left:50%;transform:translateX(-50%);background:rgba(200,16,46,0.95);color:#fff;padding:1rem 2rem;border-radius:8px;z-index:9999;font-size:0.9rem;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.5)}
 :root{--or:#B5A030;--vert:#B5A030;--rouge:#C8102E;--blanc:#FAF8F2;--sombre:#0a0800;--bg:#0c0a00}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:Georgia,serif;background:var(--sombre);color:var(--blanc)}
