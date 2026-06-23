@@ -134,7 +134,7 @@
     <?= $this->Flash->render() ?>
     <form action="/users/forgot" method="post">
       <div class="form-group"><label>Email</label><input type="email" name="email" placeholder="votre@email.mg" required></div>
-      <input type="submit" value="Envoyer le code" class="btn-login" style="background:linear-gradient(135deg,#964B00,#C8963E) !important;color:#ffffff !important;border:2px solid rgba(200,150,62,0.8) !important;font-weight:800 !important">
+      <input type="submit" value="Envoyer le code" class="btn-login" style="background:linear-gradient(135deg,#1a5c2e,#2D8C4E,#4caf50) !important;color:#ffffff !important;border:2px solid rgba(45,140,78,0.8) !important;font-weight:800 !important;box-shadow:0 4px 20px rgba(45,140,78,0.55) !important">
     </form>
     <div style="text-align:center;margin-top:1rem">
       <a onclick="showOv('login')" style="cursor:pointer;font-size:0.75rem;color:rgba(250,248,242,0.45)">&#8592; Retour a la connexion</a>
