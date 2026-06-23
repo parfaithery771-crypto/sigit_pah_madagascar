@@ -16,7 +16,8 @@ p{color:rgba(250,248,242,0.6);font-size:0.85rem;margin-bottom:1.5rem}
 .code-inputs{display:flex;gap:0.5rem;justify-content:center;margin-bottom:1.5rem}
 .code-inputs input{width:45px;height:55px;text-align:center;font-size:1.5rem;font-weight:bold;background:rgba(255,255,255,0.05);border:2px solid rgba(200,150,62,0.3);border-radius:8px;color:#FAF8F2;transition:border-color 0.2s}
 .code-inputs input:focus{outline:none;border-color:#C8963E;background:rgba(200,150,62,0.08)}
-.btn{width:100%;background:linear-gradient(135deg,#C8963E,#964B00);border:none;border-radius:8px;padding:0.85rem;color:#FAF8F2;font-size:0.95rem;cursor:pointer;font-family:inherit;margin-bottom:1rem}
+.btn{width:100%;background:linear-gradient(135deg,#C8963E,#b8860b);border:none;border-radius:8px;padding:0.85rem;color:#ffffff;font-size:0.95rem;font-weight:bold;cursor:pointer;font-family:inherit;margin-bottom:1rem;box-shadow:0 4px 15px rgba(200,150,62,0.4)}
+.btn:hover{background:linear-gradient(135deg,#d4a843,#C8963E);box-shadow:0 6px 20px rgba(200,150,62,0.6)}font-size:0.95rem;cursor:pointer;font-family:inherit;margin-bottom:1rem}
 .btn:hover{opacity:0.9}
 .back{color:rgba(200,150,62,0.6);font-size:0.8rem;text-decoration:none}
 .message{padding:0.75rem;border-radius:8px;margin-bottom:1rem;font-size:0.85rem}
