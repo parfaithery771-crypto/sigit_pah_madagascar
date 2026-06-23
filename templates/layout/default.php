@@ -297,5 +297,76 @@ input,select,textarea{background:#111100 !important;color:#FAF8F2 !important;bor
 <body>
 <?= $this->Flash->render() ?>
 <?= $this->fetch('content') ?>
+<?php if(isset($pendingCount) && $pendingCount > 0): ?>
+<style>
+#notif-popup{position:fixed;top:1.2rem;right:1.2rem;z-index:99999;display:flex;flex-direction:column;gap:0.5rem;pointer-events:none}
+.notif-card{background:linear-gradient(135deg,#1c1500,#2a1f00);border:1px solid rgba(200,16,46,0.6);border-radius:12px;padding:0.85rem 1.1rem;color:#FAF8F2;font-size:0.82rem;box-shadow:0 8px 30px rgba(0,0,0,0.6),0 0 20px rgba(200,16,46,0.2);display:flex;align-items:center;gap:0.75rem;pointer-events:all;animation:slideIn 0.4s ease;min-width:280px;max-width:320px;cursor:pointer}
+.notif-card:hover{border-color:rgba(200,16,46,0.9);box-shadow:0 8px 30px rgba(0,0,0,0.8),0 0 30px rgba(200,16,46,0.3)}
+.notif-icon{width:36px;height:36px;border-radius:50%;background:rgba(200,16,46,0.2);border:2px solid rgba(200,16,46,0.5);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.notif-badge-dot{position:fixed;top:0.6rem;right:0.6rem;width:12px;height:12px;background:#C8102E;border-radius:50%;z-index:99998;box-shadow:0 0 8px rgba(200,16,46,0.8);animation:pulse 1.5s infinite}
+@keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes slideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(120%);opacity:0}}
+@keyframes pulse{0%,100%{box-shadow:0 0 8px rgba(200,16,46,0.8)}50%{box-shadow:0 0 20px rgba(200,16,46,1),0 0 40px rgba(200,16,46,0.4)}}
+</style>
+<div id="notif-popup"></div>
+<div class="notif-badge-dot" id="notif-dot" style="display:none"></div>
+<script>
+(function(){
+var lastCount = <?= (int)($pendingCount ?? 0) ?>;
+var shown = false;
+
+function showNotif(count){
+    var popup = document.getElementById('notif-popup');
+    var dot = document.getElementById('notif-dot');
+    if(!popup) return;
+    popup.innerHTML = '';
+    if(count > 0){
+        dot.style.display = 'block';
+        var card = document.createElement('div');
+        card.className = 'notif-card';
+        card.innerHTML = '<div class="notif-icon">&#128276;</div><div><div style="font-weight:bold;color:#E06060;margin-bottom:0.2rem">'+count+' demande'+(count>1?'s':'')+' en attente</div><div style="color:rgba(250,248,242,0.6);font-size:0.75rem">Cliquez pour voir les demandes</div></div><div style="margin-left:auto;color:rgba(250,248,242,0.3);font-size:1.2rem" onclick="closeNotif(event)">&#10005;</div>';
+        card.onclick = function(e){ if(e.target.tagName!=='DIV'||!e.target.onclick) window.location='/admin/users'; };
+        popup.appendChild(card);
+        setTimeout(function(){ 
+            if(card.parentNode){ 
+                card.style.animation='slideOut 0.4s ease forwards';
+                setTimeout(function(){ if(card.parentNode) card.remove(); }, 400);
+            }
+        }, 8000);
+    } else {
+        dot.style.display = 'none';
+    }
+}
+
+function closeNotif(e){
+    e.stopPropagation();
+    var popup = document.getElementById('notif-popup');
+    if(popup) popup.innerHTML='';
+}
+
+function checkPending(){
+    fetch('/api/pending-count').then(function(r){return r.json();}).then(function(d){
+        var dot = document.getElementById('notif-dot');
+        if(d.count > 0) dot.style.display='block';
+        else dot.style.display='none';
+        if(d.count > lastCount){
+            lastCount = d.count;
+            showNotif(d.count);
+        } else {
+            lastCount = d.count;
+        }
+    }).catch(function(){});
+}
+
+// Mampiseho notification voalohany raha misy pending
+if(lastCount > 0){
+    setTimeout(function(){ showNotif(lastCount); }, 1000);
+}
+
+// Check isaky ny 20 secondes
+setInterval(checkPending, 20000);
+})();
+</script>
+<?php endif; ?>
 </body>
 </html>
