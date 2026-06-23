@@ -91,7 +91,108 @@ class UsersController extends AppController
 
     public function forgot()
     {
+        if ($this->request->is("post")) {
+            $email = trim($this->request->getData("email") ?? "");
+            $Users = $this->getTableLocator()->get("Users");
+            $user = $Users->find()->where(["email" => $email])->first();
+            if ($user) {
+                $code = str_pad((string)random_int(0, 999999), 6, "0", STR_PAD_LEFT);
+                $expires = date("Y-m-d H:i:s", strtotime("+15 minutes"));
+                $user->reset_token = $code;
+                $user->reset_expires = $expires;
+                $Users->save($user);
+                try {
+                    $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+                    $mail->isSMTP();
+                    $mail->Host = "smtp.gmail.com";
+                    $mail->SMTPAuth = true;
+                    $mail->Username = getenv("GMAIL_USER") ?: "parfaithery771@gmail.com";
+                    $mail->Password = getenv("GMAIL_PASS") ?: "bbyyicypfixpdnpa";
+                    $mail->SMTPSecure = "tls";
+                    $mail->Port = 587;
+                    $mail->setFrom(getenv("GMAIL_USER") ?: "parfaithery771@gmail.com", "SIGIT");
+                    $mail->addAddress($email, $user->nom);
+                    $mail->isHTML(true);
+                    $mail->Subject = "Code de reinitialisation SIGIT";
+                    $mail->Body = "<div style=\"font-family:Arial,sans-serif;max-width:500px;margin:0 auto;background:#1a1200;color:#FAF8F2;padding:2rem;border-radius:12px;border:1px solid rgba(200,150,62,0.3)\">
+                        <h2 style=\"color:#C8963E;text-align:center\">SIGIT - Reset Password</h2>
+                        <p>Bonjour <b>{$user->nom}</b>,</p>
+                        <p>Voici votre code de reinitialisation :</p>
+                        <div style=\"text-align:center;font-size:2.5rem;font-weight:bold;color:#C8963E;background:rgba(200,150,62,0.1);padding:1rem;border-radius:8px;letter-spacing:0.5rem;margin:1rem 0\">{$code}</div>
+                        <p style=\"color:rgba(250,248,242,0.6);font-size:0.85rem\">Ce code expire dans <b>15 minutes</b>.</p>
+                        <p style=\"color:rgba(250,248,242,0.6);font-size:0.85rem\">Si vous n avez pas demande cette reinitialisation, ignorez cet email.</p>
+                        <hr style=\"border-color:rgba(200,150,62,0.2)\">
+                        <p style=\"text-align:center;color:rgba(250,248,242,0.4);font-size:0.75rem\">Ministere du Commerce et de la Consommation - Madagascar</p>
+                    </div>";
+                    $mail->send();
+                    $this->request->getSession()->write("reset_email", $email);
+                    $this->Flash->success("Code envoye a " . $email . " ! Verifiez votre boite mail.");
+                    return $this->redirect("/users/reset-code");
+                } catch (\Exception $e) {
+                    $this->Flash->error("Erreur envoi email: " . $e->getMessage());
+                }
+            } else {
+                $this->Flash->success("Si cet email existe, un code a ete envoye.");
+                return $this->redirect("/users/reset-code");
+            }
+        }
         $this->render("/Pages/home");
+    }
+
+    public function resetCode()
+    {
+        if ($this->request->is("post")) {
+            $code = trim($this->request->getData("code") ?? "");
+            $email = $this->request->getSession()->read("reset_email");
+            if (!$email) {
+                $this->Flash->error("Session expiree. Recommencez.");
+                return $this->redirect("/users/forgot");
+            }
+            $Users = $this->getTableLocator()->get("Users");
+            $user = $Users->find()->where(["email" => $email, "reset_token" => $code])->first();
+            if (!$user) {
+                $this->Flash->error("Code incorrect.");
+                return;
+            }
+            if (strtotime($user->reset_expires) < time()) {
+                $this->Flash->error("Code expire. Recommencez.");
+                return $this->redirect("/users/forgot");
+            }
+            $this->request->getSession()->write("reset_verified", true);
+            return $this->redirect("/users/new-password");
+        }
+    }
+
+    public function newPassword()
+    {
+        if (!$this->request->getSession()->read("reset_verified")) {
+            return $this->redirect("/users/forgot");
+        }
+        if ($this->request->is("post")) {
+            $pwd = $this->request->getData("password") ?? "";
+            $confirm = $this->request->getData("confirm") ?? "";
+            if (strlen($pwd) < 8 || !preg_match("/[A-Z]/", $pwd) || !preg_match("/[0-9]/", $pwd) || !preg_match("/[^a-zA-Z0-9]/", $pwd)) {
+                $this->Flash->error("Mot de passe trop faible (8 car. min, majuscule, chiffre, special).");
+                return;
+            }
+            if ($pwd !== $confirm) {
+                $this->Flash->error("Mots de passe differents.");
+                return;
+            }
+            $email = $this->request->getSession()->read("reset_email");
+            $Users = $this->getTableLocator()->get("Users");
+            $user = $Users->find()->where(["email" => $email])->first();
+            if ($user) {
+                $user->password = password_hash($pwd, PASSWORD_DEFAULT);
+                $user->reset_token = null;
+                $user->reset_expires = null;
+                $Users->save($user);
+                $this->request->getSession()->delete("reset_email");
+                $this->request->getSession()->delete("reset_verified");
+                $this->Flash->success("Mot de passe modifie avec succes ! Connectez-vous.");
+                return $this->redirect("/");
+            }
+        }
     }
 
     public function profile()

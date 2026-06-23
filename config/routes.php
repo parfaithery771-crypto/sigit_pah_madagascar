@@ -34,6 +34,8 @@ return static function (RouteBuilder $routes): void {
         $builder->connect("/materiel", ["controller"=>"Pages","action"=>"materiel"]);
         $builder->connect("/rapports", ["controller"=>"Pages","action"=>"rapports"]);
        $builder->connect("/admin/users/approve/*", ["controller"=>"Users","action"=>"approve"]);
-$builder->connect("/admin/users/refuse/*", ["controller"=>"Users","action"=>"refuse"]); $builder->fallbacks(DashedRoute::class);
+$builder->connect("/admin/users/refuse/*", ["controller"=>"Users","action"=>"refuse"]); $builder->connect("/users/forgot", ["controller"=>"Users","action"=>"forgot"]);
+$builder->connect("/users/reset-code", ["controller"=>"Users","action"=>"resetCode"]);
+$builder->connect("/users/new-password", ["controller"=>"Users","action"=>"newPassword"]); $builder->fallbacks(DashedRoute::class);
     });
 };
