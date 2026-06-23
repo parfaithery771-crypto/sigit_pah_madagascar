@@ -4,8 +4,7 @@ $u = $session->read("Auth.nom") ?? "";
 $r = $session->read("Auth.role") ?? "";
 $av = $session->read("Auth.avatar") ?? "";
 $avUrl = $av ? "/uploads/avatars/".$av : "";
-$pending = array_filter($users, fn($u) => ($u->status ?? 'approved') === 'pending');
-$others = array_filter($users, fn($u) => ($u->status ?? 'approved') !== 'pending');
+$pending = array_filter($users, fn($x) => ($x->status ?? "approved") === "pending");
 ?>
 <div class="app">
 <div class="sidebar">
@@ -44,17 +43,15 @@ $others = array_filter($users, fn($u) => ($u->status ?? 'approved') !== 'pending
 <table>
 <thead><tr><th>Nom</th><th>Email</th><th>Date</th><th>Actions</th></tr></thead>
 <tbody>
-<?php foreach($pending as $user): ?>
+<?php foreach($pending as $pu): ?>
 <tr>
-<td>
-<?php $st = $user->status ?? 'approved'; ?>
-<?php if($st === 'approved'): ?>
-<span class="badge-etat etat-ok">&#10003; Approuve</span>
-<?php elseif($st === 'pending'): ?>
-<span class="badge-etat etat-pend">&#9203; En attente</span>
-<?php else: ?>
-<span class="badge-etat etat-late">&#10007; Refuse</span>
-<?php endif; ?>
+<td><?= h($pu->nom) ?></td>
+<td><?= h($pu->email) ?></td>
+<td style="font-size:0.75rem"><?= h($pu->created) ?></td>
+<td style="display:flex;gap:0.4rem">
+<a href="/admin/users/approve/<?= $pu->id ?>" class="btn-action" style="background:rgba(45,140,78,0.3);color:#5EC878;font-size:0.75rem" onclick="return confirm('Approuver cet utilisateur ?')">&#10003; Approuver</a>
+<a href="/admin/users/refuse/<?= $pu->id ?>" class="btn-action" style="color:#E06060;font-size:0.75rem" onclick="return confirm('Refuser cet utilisateur ?')">&#10007; Refuser</a>
+<a href="/admin/users/delete/<?= $pu->id ?>" class="btn-action" style="color:#E06060;font-size:0.75rem;background:rgba(200,16,46,0.2)" onclick="return confirm('Supprimer definitivement ?')">&#128465; Suppr</a>
 </td>
 </tr>
 <?php endforeach; ?>
@@ -78,16 +75,24 @@ $others = array_filter($users, fn($u) => ($u->status ?? 'approved') !== 'pending
 <td><span class="badge-etat <?= $user->role === 'admin' ? 'etat-ok' : 'etat-pend' ?>"><?= h($user->role) ?></span></td>
 <td>
 <?php $st = $user->status ?? 'approved'; ?>
-<span class="badge-etat <?= $st==='approved'?'etat-ok':($st==='pending'?'etat-pend':'etat-late') ?>"><?= h($st) ?></span>
+<?php if($st === 'approved'): ?>
+<span class="badge-etat etat-ok">&#10003; Approuve</span>
+<?php elseif($st === 'pending'): ?>
+<span class="badge-etat etat-pend">&#9203; En attente</span>
+<?php else: ?>
+<span class="badge-etat etat-late">&#10007; Refuse</span>
+<?php endif; ?>
 </td>
 <td style="display:flex;gap:0.3rem">
 <?php if($st === 'pending'): ?>
 <a href="/admin/users/approve/<?= $user->id ?>" class="btn-action" style="background:rgba(45,140,78,0.3);color:#5EC878;font-size:0.68rem;padding:0.2rem 0.5rem" onclick="return confirm('Approuver ?')">&#10003;</a>
 <a href="/admin/users/refuse/<?= $user->id ?>" class="btn-action" style="color:#E06060;font-size:0.68rem;padding:0.2rem 0.5rem" onclick="return confirm('Refuser ?')">&#10007;</a>
 <?php elseif($st === 'refused'): ?>
-<a href="/admin/users/approve/<?= $user->id ?>" class="btn-action" style="background:rgba(45,140,78,0.3);color:#5EC878;font-size:0.68rem;padding:0.2rem 0.5rem" onclick="return confirm('Ré-approuver ?')">&#10003;</a>
+<a href="/admin/users/approve/<?= $user->id ?>" class="btn-action" style="background:rgba(45,140,78,0.3);color:#5EC878;font-size:0.68rem;padding:0.2rem 0.5rem" onclick="return confirm('Re-approuver ?')">&#10003;</a>
+<a href="/admin/users/delete/<?= $user->id ?>" class="btn-action" style="color:#E06060;font-size:0.68rem;padding:0.2rem 0.5rem;background:rgba(200,16,46,0.2)" onclick="return confirm('Supprimer ?')">&#128465;</a>
 <?php else: ?>
 <a href="/admin/users/refuse/<?= $user->id ?>" class="btn-action" style="color:#E06060;font-size:0.68rem;padding:0.2rem 0.5rem" onclick="return confirm('Suspendre ?')">&#9940;</a>
+<a href="/admin/users/delete/<?= $user->id ?>" class="btn-action" style="color:#E06060;font-size:0.68rem;padding:0.2rem 0.5rem;background:rgba(200,16,46,0.2)" onclick="return confirm('Supprimer ?')">&#128465;</a>
 <?php endif; ?>
 </td>
 </tr>

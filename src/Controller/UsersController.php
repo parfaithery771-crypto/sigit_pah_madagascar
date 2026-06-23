@@ -245,7 +245,22 @@ class UsersController extends AppController
         return $this->redirect("/admin/users");
     }
 
-    public function testlogin()
+  public function delete($id = null)
+{
+    $redirect = $this->requireAdmin();
+    if ($redirect) return $redirect;
+    $Users = $this->getTableLocator()->get("Users");
+    $user = $Users->find()->where(["id" => $id])->first();
+    if ($user) {
+        if ($user->role === "admin") {
+            $this->Flash->error("Impossible de supprimer un administrateur.");
+            return $this->redirect("/admin/users");
+        }
+        $Users->delete($user);
+        $this->Flash->success("Utilisateur supprime.");
+    }
+    return $this->redirect("/admin/users");
+}  public function testlogin()
     {
         $this->autoRender = false;
         $session = $this->request->getSession();
