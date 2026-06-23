@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace App\Controller;
 use Cake\Controller\Controller;
+use Cake\Event\EventInterface;
 class AppController extends Controller
 {
     public function initialize(): void
@@ -43,5 +44,21 @@ class AppController extends Controller
     protected function currentUserId(): ?int
     {
         return $this->request->getSession()->read('Auth.id');
+    }
+
+    public function beforeRender(EventInterface $event): void
+    {
+        parent::beforeRender($event);
+        if ($this->isLoggedIn() && $this->isAdmin()) {
+            try {
+                $Users = $this->getTableLocator()->get('Users');
+                $pendingCount = $Users->find()->where(['status' => 'pending'])->count();
+                $this->set('pendingCount', $pendingCount);
+            } catch (\Exception $e) {
+                $this->set('pendingCount', 0);
+            }
+        } else {
+            $this->set('pendingCount', 0);
+        }
     }
 }
