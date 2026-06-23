@@ -16,6 +16,14 @@ class UsersController extends AppController
             $Users = $this->getTableLocator()->get("Users");
             $user = $Users->find()->where(["email" => $email])->first();
             if ($user && password_verify($password, $user->password)) {
+                if (($user->status ?? "approved") === "pending") {
+                    $this->Flash->error("Votre compte est en attente d approbation par l administrateur.");
+                    return $this->redirect("/");
+                }
+                if (($user->status ?? "approved") === "refused") {
+                    $this->Flash->error("Votre demande a ete refusee. Contactez l administrateur.");
+                    return $this->redirect("/");
+                }
                 $session = $this->request->getSession();
                 $session->write("Auth.id", $user->id);
                 $session->write("Auth.nom", $user->nom);
@@ -34,6 +42,25 @@ class UsersController extends AppController
     {
         if ($this->request->is("post")) {
             $data = $this->request->getData();
+            $password = $data["password"] ?? "";
+
+            if (strlen($password) < 8) {
+                $this->Flash->error("Le mot de passe doit contenir au moins 8 caracteres.");
+                return $this->redirect("/");
+            }
+            if (!preg_match('/[A-Z]/', $password)) {
+                $this->Flash->error("Le mot de passe doit contenir au moins une majuscule.");
+                return $this->redirect("/");
+            }
+            if (!preg_match('/[0-9]/', $password)) {
+                $this->Flash->error("Le mot de passe doit contenir au moins un chiffre.");
+                return $this->redirect("/");
+            }
+            if (!preg_match('/[^a-zA-Z0-9]/', $password)) {
+                $this->Flash->error("Le mot de passe doit contenir au moins un caractere special.");
+                return $this->redirect("/");
+            }
+
             $Users = $this->getTableLocator()->get("Users");
             $existing = $Users->find()->where(["email" => $data["email"]])->first();
             if ($existing) {
@@ -44,18 +71,13 @@ class UsersController extends AppController
                 "nom"      => $data["nom"],
                 "prenom"   => $data["prenom"] ?? "",
                 "email"    => $data["email"],
-                "password" => password_hash($data["password"], PASSWORD_DEFAULT),
+                "password" => password_hash($password, PASSWORD_DEFAULT),
                 "role"     => "technicien",
+                "status"   => "pending",
             ]);
             if ($Users->save($user)) {
-                $session = $this->request->getSession();
-                $session->write("Auth.id", $user->id);
-                $session->write("Auth.nom", $user->nom);
-                $session->write("Auth.email", $user->email);
-                $session->write("Auth.role", $user->role);
-                $session->write("Auth.loggedIn", true);
-                $session->write("Auth.avatar", "");
-                return $this->redirect("/dashboard");
+                $this->Flash->success("Demande envoyee ! Attendez l approbation de l administrateur.");
+                return $this->redirect("/");
             }
             $this->Flash->error("Erreur inscription.");
         }
@@ -95,8 +117,20 @@ class UsersController extends AppController
             $data = $this->request->getData();
             $newPwd = $data["new_password"] ?? "";
             $confirmPwd = $data["confirm_password"] ?? "";
-            if (empty($newPwd) || strlen($newPwd) < 6) {
-                $this->Flash->error("Mot de passe trop court.");
+            if (empty($newPwd) || strlen($newPwd) < 8) {
+                $this->Flash->error("Mot de passe trop court (min 8 caracteres).");
+                return $this->redirect("/users/profile");
+            }
+            if (!preg_match('/[A-Z]/', $newPwd)) {
+                $this->Flash->error("Le mot de passe doit contenir au moins une majuscule.");
+                return $this->redirect("/users/profile");
+            }
+            if (!preg_match('/[0-9]/', $newPwd)) {
+                $this->Flash->error("Le mot de passe doit contenir au moins un chiffre.");
+                return $this->redirect("/users/profile");
+            }
+            if (!preg_match('/[^a-zA-Z0-9]/', $newPwd)) {
+                $this->Flash->error("Le mot de passe doit contenir au moins un caractere special.");
                 return $this->redirect("/users/profile");
             }
             if ($newPwd !== $confirmPwd) {
@@ -182,6 +216,34 @@ class UsersController extends AppController
         $Users = $this->getTableLocator()->get("Users");
         $users = $Users->find()->orderBy(["id" => "DESC"])->toArray();
         $this->set("users", $users);
+    }
+
+    public function approve($id = null)
+    {
+        $redirect = $this->requireAdmin();
+        if ($redirect) return $redirect;
+        $Users = $this->getTableLocator()->get("Users");
+        $user = $Users->find()->where(["id" => $id])->first();
+        if ($user) {
+            $user->status = "approved";
+            $Users->save($user);
+            $this->Flash->success("Utilisateur approuve.");
+        }
+        return $this->redirect("/admin/users");
+    }
+
+    public function refuse($id = null)
+    {
+        $redirect = $this->requireAdmin();
+        if ($redirect) return $redirect;
+        $Users = $this->getTableLocator()->get("Users");
+        $user = $Users->find()->where(["id" => $id])->first();
+        if ($user) {
+            $user->status = "refused";
+            $Users->save($user);
+            $this->Flash->error("Utilisateur refuse.");
+        }
+        return $this->redirect("/admin/users");
     }
 
     public function testlogin()
