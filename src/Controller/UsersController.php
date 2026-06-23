@@ -4,8 +4,9 @@ namespace App\Controller;
 class UsersController extends AppController
 {
     public function login()
-    {
-        if ($this->request->is("post")) {
+    if (!$this->request->is("post")) {
+    return $this->redirect("/");
+} {
             $data = $this->request->getData();
             $email = trim($data["email"] ?? "");
             $password = $data["password"] ?? "";
