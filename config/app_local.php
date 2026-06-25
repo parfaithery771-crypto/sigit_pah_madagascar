@@ -6,20 +6,16 @@ return [
     ],
     "Datasources" => [
         "default" => [
-            "host"       => env("DB_HOST", "mysql-22e1d2da-sigitmincc.i.aivencloud.com"),
-            "username"   => env("DB_USERNAME", "avnadmin"),
-            "password"   => env("DB_PASSWORD", "AVNS_xzwmfEDAqtpY_ZcrA1N"),
-            "database"   => env("DB_DATABASE", "defaultdb"),
+            "host"       => env("DB_HOST", "localhost"),
+            "username"   => env("DB_USERNAME", "root"),
+            "password"   => env("DB_PASSWORD", ""),
+            "database"   => env("DB_DATABASE", "gestion_interventions"),
             "driver"     => "Cake\\Database\\Driver\\Mysql",
             "encoding"   => "utf8mb4",
             "collation"  => "utf8mb4_unicode_ci",
             "timezone"   => "UTC",
-            "port"       => env("DB_PORT", "14995"),
+            "port"       => env("DB_PORT", "3306"),
             "persistent" => false,
-            "flags"      => [
-                \PDO::MYSQL_ATTR_SSL_CA => true,
-                \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
-            ],
         ],
     ],
     "Cache" => [
