@@ -9,22 +9,18 @@ try {
     $pdo = new PDO("mysql:host=$host;port=$port;dbname=$db", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    $newPassword = password_hash('Admin2025!', PASSWORD_DEFAULT);
+    $pdo->exec("DROP TABLE IF EXISTS livrables");
+    $pdo->exec("CREATE TABLE livrables (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        intervention_id INT,
+        date_livrable DATE,
+        date_livraison DATE,
+        statut VARCHAR(50) DEFAULT 'en_attente',
+        created DATETIME DEFAULT CURRENT_TIMESTAMP,
+        modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )");
     
-    // Update admin existant
-    $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE email = 'admin@sigit.mg'");
-    $stmt->execute([$newPassword]);
-    
-    if ($stmt->rowCount() === 0) {
-        // Raha tsy misy, mamorona vaovao
-        $stmt2 = $pdo->prepare("INSERT INTO users (nom, email, password, role, status) VALUES ('Admin', 'admin@sigit.mg', ?, 'admin', 'approved')");
-        $stmt2->execute([$newPassword]);
-        echo 'Admin created!';
-    } else {
-        echo 'Password updated!';
-    }
-    
-    echo ' Login: admin@sigit.mg / Admin2025!';
+    echo 'Livrables table fixed!';
 } catch(Exception $e) {
     echo 'Error: ' . $e->getMessage();
 }
