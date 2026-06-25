@@ -6,14 +6,14 @@ class UsersController extends AppController
     public function login()
     {
         if (!$this->request->is("post")) {
-             (rehetra tsy ilay /dashboard)return $this->redirect("/?modal=login");
+            return $this->redirect("/");
         }
         $data = $this->request->getData();
         $email = trim($data["email"] ?? "");
         $password = $data["password"] ?? "";
         if (empty($email) || empty($password)) {
             $this->Flash->error("Remplissez tous les champs.");
-            return $this->redirect("/?modal=inscrire")
+            return $this->redirect("/?modal=login");
         }
         $Users = $this->getTableLocator()->get("Users");
         $user = $Users->find()->where(["email" => $email])->first();
@@ -36,7 +36,7 @@ class UsersController extends AppController
             return $this->redirect("/dashboard");
         }
         $this->Flash->error("Email ou mot de passe incorrect.");
-        return $this->redirect("/");
+        return $this->redirect("/?modal=login");
     }
 
     public function register()
@@ -46,25 +46,25 @@ class UsersController extends AppController
             $password = $data["password"] ?? "";
             if (strlen($password) < 8) {
                 $this->Flash->error("Le mot de passe doit contenir au moins 8 caracteres.");
-                return $this->redirect("/");
+                return $this->redirect("/?modal=inscrire");
             }
             if (!preg_match('/[A-Z]/', $password)) {
                 $this->Flash->error("Le mot de passe doit contenir au moins une majuscule.");
-                return $this->redirect("/");
+                return $this->redirect("/?modal=inscrire");
             }
             if (!preg_match('/[0-9]/', $password)) {
                 $this->Flash->error("Le mot de passe doit contenir au moins un chiffre.");
-                return $this->redirect("/");
+                return $this->redirect("/?modal=inscrire");
             }
             if (!preg_match('/[^a-zA-Z0-9]/', $password)) {
                 $this->Flash->error("Le mot de passe doit contenir au moins un caractere special.");
-                return $this->redirect("/");
+                return $this->redirect("/?modal=inscrire");
             }
             $Users = $this->getTableLocator()->get("Users");
             $existing = $Users->find()->where(["email" => $data["email"]])->first();
             if ($existing) {
                 $this->Flash->error("Email deja utilise.");
-                return $this->redirect("/");
+                return $this->redirect("/?modal=inscrire");
             }
             $user = $Users->newEntity([
                 "nom"      => $data["nom"],
@@ -76,9 +76,10 @@ class UsersController extends AppController
             ]);
             if ($Users->save($user)) {
                 $this->Flash->success("Demande envoyee ! Attendez l approbation de l administrateur.");
-                return $this->redirect("/");
+                return $this->redirect("/?modal=login");
             }
             $this->Flash->error("Erreur inscription.");
+            return $this->redirect("/?modal=inscrire");
         }
         return $this->redirect("/");
     }
@@ -125,7 +126,7 @@ class UsersController extends AppController
                     return $this->redirect("/users/reset-code");
                 } catch (\Exception $e) {
                     $this->Flash->error("Erreur envoi email: " . $e->getMessage());
-                    return $this->redirect("/");
+                    return $this->redirect("/?modal=forgot");
                 }
             } else {
                 $this->Flash->success("Si cet email existe, un code a ete envoye.");
@@ -186,7 +187,7 @@ class UsersController extends AppController
                 $this->request->getSession()->delete("reset_email");
                 $this->request->getSession()->delete("reset_verified");
                 $this->Flash->success("Mot de passe modifie avec succes ! Connectez-vous.");
-                return $this->redirect("/");
+                return $this->redirect("/?modal=login");
             }
         }
     }
