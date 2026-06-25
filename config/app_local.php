@@ -1,22 +1,27 @@
 <?php
 return [
-    "debug" => true, "Error" => ["exceptionRenderer" => "Cake\\Error\\ExceptionRenderer"],
+    "debug" => true,
     "Security" => [
         "salt" => "sigit-madagascar-repoblika-2025-secure-salt-key",
     ],
-     "Datasources" => [
-    "default" => [
-        "host"     => env("DB_HOST", "sql7.freesqldatabase.com"),
-        "username" => env("DB_USERNAME", "sql7830743"),
-        "password" => env("DB_PASSWORD", "X9UVEJYT3f"),
-        "database" => env("DB_DATABASE", "sql7830743"),
-        "driver"   => "Cake\\Database\\Driver\\Mysql",
-        "encoding" => "utf8mb4",
-        "timezone" => "UTC",
-        "port"     => env("DB_PORT", "3306"),
-        "persistent" => false,
+    "Datasources" => [
+        "default" => [
+            "host"       => env("DB_HOST", "mysql-22e1d2da-sigitmincc.i.aivencloud.com"),
+            "username"   => env("DB_USERNAME", "avnadmin"),
+            "password"   => env("DB_PASSWORD", "AVNS_xzwmfEDAqtpY_ZcrA1N"),
+            "database"   => env("DB_DATABASE", "defaultdb"),
+            "driver"     => "Cake\\Database\\Driver\\Mysql",
+            "encoding"   => "utf8mb4",
+            "collation"  => "utf8mb4_unicode_ci",
+            "timezone"   => "UTC",
+            "port"       => env("DB_PORT", "14995"),
+            "persistent" => false,
+            "flags"      => [
+                \PDO::MYSQL_ATTR_SSL_CA => true,
+                \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
+            ],
+        ],
     ],
-],
     "Cache" => [
         "default" => [
             "className" => "Cake\\Cache\\Engine\\FileEngine",
