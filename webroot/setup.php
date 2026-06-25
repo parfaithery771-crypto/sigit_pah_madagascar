@@ -9,24 +9,22 @@ try {
     $pdo = new PDO("mysql:host=$host;port=$port;dbname=$db", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    // Drop sy recreate ny table interventions mba ho marina
-    $pdo->exec("DROP TABLE IF EXISTS interventions");
-    $pdo->exec("CREATE TABLE interventions (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        date DATE,
-        direction_id INT,
-        type_intervention_id INT,
-        type_intervention VARCHAR(100),
-        observation TEXT,
-        perspectives TEXT,
-        date_livrable DATE,
-        statut VARCHAR(50) DEFAULT 'en_attente',
-        user_id INT,
-        created DATETIME DEFAULT CURRENT_TIMESTAMP,
-        modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )");
+    $newPassword = password_hash('Admin2025!', PASSWORD_DEFAULT);
     
-    echo 'Interventions table fixed!';
+    // Update admin existant
+    $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE email = 'admin@sigit.mg'");
+    $stmt->execute([$newPassword]);
+    
+    if ($stmt->rowCount() === 0) {
+        // Raha tsy misy, mamorona vaovao
+        $stmt2 = $pdo->prepare("INSERT INTO users (nom, email, password, role, status) VALUES ('Admin', 'admin@sigit.mg', ?, 'admin', 'approved')");
+        $stmt2->execute([$newPassword]);
+        echo 'Admin created!';
+    } else {
+        echo 'Password updated!';
+    }
+    
+    echo ' Login: admin@sigit.mg / Admin2025!';
 } catch(Exception $e) {
     echo 'Error: ' . $e->getMessage();
 }
