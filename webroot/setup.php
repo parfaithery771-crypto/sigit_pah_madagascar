@@ -9,18 +9,24 @@ try {
     $pdo = new PDO("mysql:host=$host;port=$port;dbname=$db", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    $sqls = [
-        "ALTER TABLE interventions ADD COLUMN IF NOT EXISTS type_intervention VARCHAR(100) DEFAULT NULL",
-        "ALTER TABLE interventions ADD COLUMN IF NOT EXISTS type_intervention_id INT DEFAULT NULL",
-        "ALTER TABLE interventions ADD COLUMN IF NOT EXISTS direction_id INT DEFAULT NULL",
-        "ALTER TABLE interventions ADD COLUMN IF NOT EXISTS user_id INT DEFAULT NULL",
-    ];
+    // Drop sy recreate ny table interventions mba ho marina
+    $pdo->exec("DROP TABLE IF EXISTS interventions");
+    $pdo->exec("CREATE TABLE interventions (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        date DATE,
+        direction_id INT,
+        type_intervention_id INT,
+        type_intervention VARCHAR(100),
+        observation TEXT,
+        perspectives TEXT,
+        date_livrable DATE,
+        statut VARCHAR(50) DEFAULT 'en_attente',
+        user_id INT,
+        created DATETIME DEFAULT CURRENT_TIMESTAMP,
+        modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )");
     
-    foreach ($sqls as $sql) {
-        try { $pdo->exec($sql); } catch(Exception $e) { echo "Skip: " . $e->getMessage() . "<br>"; }
-    }
-    
-    echo 'Columns added!';
+    echo 'Interventions table fixed!';
 } catch(Exception $e) {
     echo 'Error: ' . $e->getMessage();
 }
