@@ -51,7 +51,7 @@
       <h2 style="color:var(--or);letter-spacing:0.1em">&#9670; SIGIT &#9670;</h2>
       <p style="color:rgba(250,248,242,0.5);font-size:0.75rem;font-style:italic">Authentification securisee</p>
     </div>
-    <?= $this->Flash->render() ?>
+    <?= $this->Flash->render('flash', ['params' => ['modal' => 'inscrire']]) ?>
     <form action="/users/login" method="post">
       <div class="form-group"><label>Email</label><input type="email" name="email" placeholder="votre@email.mg" required></div>
       <div class="form-group"><label>Mot de passe</label><input type="password" name="password" placeholder="........" required></div>
