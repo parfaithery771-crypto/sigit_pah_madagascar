@@ -29,7 +29,7 @@ class PagesController extends AppController
             "supervision_fonctionnement" => $Interventions->find()->where(array_merge($baseQuery, ["type_intervention"=>"supervision_fonctionnement"]))->count(),
             "supervision_analyse_pannes" => $Interventions->find()->where(array_merge($baseQuery, ["type_intervention"=>"supervision_analyse_pannes"]))->count(),
         ];
-        $livrablesList = $Livrables->find()->orderBy(["date_livraison"=>"DESC"])->limit(5)->toArray();
+        $livrablesList = $Livrables->find()->orderBy(["date_livrable"=>"DESC"])->limit(5)->toArray();
         $recentInterventions = $Interventions->find()->where($baseQuery)->orderBy(["created"=>"DESC"])->limit(10)->toArray();
         $this->set(compact("stats","livrablesList","recentInterventions","countByType","total","resolues","enCours","reparables"));
     }
@@ -45,8 +45,8 @@ class PagesController extends AppController
         if (!$this->isAdmin()) { $this->Flash->error("Acces refuse."); $this->redirect("/dashboard"); return; }
         $Interventions = $this->getTableLocator()->get("Interventions");
         $beneficiaires = $Interventions->find()
-            ->select(["beneficiaire","total"=>"COUNT(*)"])
-            ->groupBy("beneficiaire")
+            ->select(["direction_id","total"=>"COUNT(*)"])
+            ->groupBy("direction_id")
             ->orderBy(["total"=>"DESC"])
             ->toArray();
         $this->set(compact("beneficiaires"));
@@ -82,7 +82,7 @@ class PagesController extends AppController
             "supervision_fonctionnement" => $Interventions->find()->where(["type_intervention"=>"supervision_fonctionnement"])->count(),
             "supervision_analyse_pannes" => $Interventions->find()->where(["type_intervention"=>"supervision_analyse_pannes"])->count(),
         ];
-        $allInterventions = $Interventions->find()->orderBy(["date_intervention"=>"DESC"])->toArray();
+        $allInterventions = $Interventions->find()->orderBy(["created"=>"DESC"])->toArray();
         $grouped = [];
         foreach($allInterventions as $i) {
             $type = $i->type_intervention;
