@@ -1,4 +1,4 @@
-<?php $showOverlay = isset($showOverlay) ? $showOverlay : ""; ?>
+﻿<?php $showOverlay = isset($showOverlay) ? $showOverlay : ""; ?>
 <div class="bg-canvas"></div>
 <div class="bg-pattern"></div>
 <div class="scan-line"></div>
@@ -156,5 +156,10 @@
 function showOv(n){document.querySelectorAll("[id^=ov-]").forEach(function(e){e.style.display="none";});var el=document.getElementById("ov-"+n);if(el)el.style.display="flex";}
 function closeOv(){document.querySelectorAll("[id^=ov-]").forEach(function(e){e.style.display="none";});}
 document.addEventListener("keydown",function(e){if(e.key==="Escape")closeOv();});
-window.addEventListener("load",function(){var show="<?= $showOverlay ?>";if(show)showOv(show);});
+window.addEventListener("load",function(){
+  var show="<?= $showOverlay ?>";
+  if(show)showOv(show);
+  var p=new URLSearchParams(window.location.search);
+  if(p.get("modal"))showOv(p.get("modal"));
+});
 </script>

@@ -6,25 +6,25 @@ class UsersController extends AppController
     public function login()
     {
         if (!$this->request->is("post")) {
-            return $this->redirect("/");
+             (rehetra tsy ilay /dashboard)return $this->redirect("/?modal=login");
         }
         $data = $this->request->getData();
         $email = trim($data["email"] ?? "");
         $password = $data["password"] ?? "";
         if (empty($email) || empty($password)) {
             $this->Flash->error("Remplissez tous les champs.");
-            return $this->redirect("/");
+            return $this->redirect("/?modal=inscrire")
         }
         $Users = $this->getTableLocator()->get("Users");
         $user = $Users->find()->where(["email" => $email])->first();
         if ($user && password_verify($password, $user->password)) {
             if (($user->status ?? "approved") === "pending") {
                 $this->Flash->error("Votre compte est en attente d approbation par l administrateur.");
-                return $this->redirect("/");
+                return $this->redirect("/?modal=login");
             }
             if (($user->status ?? "approved") === "refused") {
                 $this->Flash->error("Votre demande a ete refusee. Contactez l administrateur.");
-                return $this->redirect("/");
+                return $this->redirect("/?modal=login");
             }
             $session = $this->request->getSession();
             $session->write("Auth.id", $user->id);
