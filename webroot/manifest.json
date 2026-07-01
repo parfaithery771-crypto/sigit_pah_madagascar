@@ -1,0 +1,21 @@
+﻿{
+  "name": "SIGIT - Gestion des Interventions",
+  "short_name": "SIGIT",
+  "description": "Systeme de Gestion des Interventions Techniques - Ministere du Commerce",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#C8963E",
+  "icons": [
+    {
+      "src": "/img/logo_mincc.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/img/logo_mincc.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>SIGIT - Repoblikan i Madagasikara</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#C8963E">
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js");
+}
+</script>
+</head>
 <style>
 .message.success{position:fixed;top:1rem;left:50%;transform:translateX(-50%);background:rgba(45,140,78,0.95);color:#fff;padding:1rem 2rem;border-radius:8px;z-index:9999;font-size:0.9rem;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.5)}
 .message.error{position:fixed;top:1rem;left:50%;transform:translateX(-50%);background:rgba(200,16,46,0.95);color:#fff;padding:1rem 2rem;border-radius:8px;z-index:9999;font-size:0.9rem;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.5)}
