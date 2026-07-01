@@ -6,10 +6,10 @@ return [
     ],
     "Datasources" => [
         "default" => [
-            "host"       => env("DB_HOST", "localhost"),
-            "username"   => env("DB_USERNAME", "root"),
-            "password"   => env("DB_PASSWORD", ""),
-            "database"   => env("DB_DATABASE", "gestion_interventions"),
+            "host"       => env("DB_HOST", "sql7.freesqldatabase.com"),
+"username"   => env("DB_USERNAME", "sql7830743"),
+"password"   => env("DB_PASSWORD", "X9UVEJYT3f"),
+"database"   => env("DB_DATABASE", "sql7830743"),
             "driver"     => "Cake\\Database\\Driver\\Mysql",
             "encoding"   => "utf8mb4",
             "collation"  => "utf8mb4_unicode_ci",
