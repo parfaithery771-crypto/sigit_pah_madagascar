@@ -29,7 +29,7 @@
 </div>
 <div class="field" style="margin-bottom:1rem">
 <label>Direction</label>
-<input type="text" name="direction" value="<?= h($livrable->direction??') ?>" style="background:#0F1E12;color:#FAF8F2;border:1px solid rgba(200,150,62,0.3);border-radius:6px;padding:0.6rem;width:100%">
+<input type="text" name="direction" value="<?= h($livrable->direction?? '') ?>" style="background:#0F1E12;color:#FAF8F2;border:1px solid rgba(200,150,62,0.3);border-radius:6px;padding:0.6rem;width:100%">
 </div>
 <div class="field" style="margin-bottom:1rem">
 <label>Etat *</label>
@@ -41,7 +41,7 @@
 </div>
 <div class="field" style="margin-bottom:1rem">
 <label>Intervention ID (optionnel)</label>
-<input type="number" name="intervention_id" value="<?= h($livrable->intervention_id??') ?>" style="background:#0F1E12;color:#FAF8F2;border:1px solid rgba(200,150,62,0.3);border-radius:6px;padding:0.6rem;width:100%">
+<input type="number" name="intervention_id" value="<?= h($livrable->intervention_id?? '') ?>" style="background:#0F1E12;color:#FAF8F2;border:1px solid rgba(200,150,62,0.3);border-radius:6px;padding:0.6rem;width:100%">
 </div>
 <input type="submit" value="Enregistrer" class="btn-submit">
 <script>
