@@ -3,12 +3,21 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 require dirname(__DIR__) . '/config/bootstrap.php';
 use Cake\Datasource\ConnectionManager;
 $conn = ConnectionManager::get('default');
-echo "=== INTERVENTIONS ===<br>";
-$rows = $conn->execute('DESCRIBE interventions')->fetchAll('assoc');
-foreach($rows as $r) echo $r['Field'].' | '.$r['Type'].'<br>';
-echo "<br>=== SAMPLE DATA ===<br>";
-$data = $conn->execute('SELECT * FROM interventions LIMIT 2')->fetchAll('assoc');
-echo '<pre>'; print_r($data); echo '</pre>';
-echo "<br>=== LIVRABLES ===<br>";
-$rows2 = $conn->execute('DESCRIBE livrables')->fetchAll('assoc');
-foreach($rows2 as $r) echo $r['Field'].' | '.$r['Type'].'<br>';
+
+$queries = [
+    "ALTER TABLE interventions ADD COLUMN date_intervention DATE NULL",
+    "ALTER TABLE interventions ADD COLUMN beneficiaire VARCHAR(255) NULL",
+    "ALTER TABLE livrables ADD COLUMN etat VARCHAR(50) NULL",
+    "ALTER TABLE livrables ADD COLUMN direction VARCHAR(255) NULL",
+];
+
+foreach ($queries as $q) {
+    try {
+        $conn->execute($q);
+        echo "OK: $q<br>";
+    } catch (\Exception $e) {
+        echo "SKIP (deja existant ou erreur): $q -- " . $e->getMessage() . "<br>";
+    }
+}
+
+echo "<br>Termine.";
