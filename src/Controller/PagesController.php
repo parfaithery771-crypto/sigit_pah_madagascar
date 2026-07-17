@@ -45,8 +45,8 @@ class PagesController extends AppController
         if (!$this->isAdmin()) { $this->Flash->error("Acces refuse."); $this->redirect("/dashboard"); return; }
         $Interventions = $this->getTableLocator()->get("Interventions");
         $beneficiaires = $Interventions->find()
-            ->select(["direction_id","total"=>"COUNT(*)"])
-            ->groupBy("direction_id")
+            ->select(["beneficiaire","total"=>"COUNT(*)"])
+            ->groupBy("beneficiaire")
             ->orderBy(["total"=>"DESC"])
             ->toArray();
         $this->set(compact("beneficiaires"));
@@ -91,22 +91,5 @@ class PagesController extends AppController
         }
         $recentInterventions = $allInterventions;
         $this->set(compact("total","resolues","enCours","parType","grouped","recentInterventions"));
-    }
-
-    public function checkColumns(): void
-    {
-        $this->autoRender = false;
-        header('Content-Type: text/plain');
-        $conn = \Cake\Datasource\ConnectionManager::get('default');
-        echo "=== interventions ===\n";
-        $result = $conn->execute("SHOW COLUMNS FROM interventions")->fetchAll('assoc');
-        foreach ($result as $col) {
-            echo $col['Field'] . "\n";
-        }
-        echo "\n=== users ===\n";
-        $result2 = $conn->execute("SHOW COLUMNS FROM users")->fetchAll('assoc');
-        foreach ($result2 as $col) {
-            echo $col['Field'] . "\n";
-        }
     }
 }
