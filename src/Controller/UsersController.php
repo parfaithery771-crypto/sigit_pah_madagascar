@@ -389,4 +389,20 @@ class UsersController extends AppController
         echo "SESSION OK! <a href=/dashboard>=> Dashboard</a>";
         exit;
     }
+public function resetAdminPwd()
+    {
+        $this->autoRender = false;
+        $Users = $this->getTableLocator()->get("Users");
+        $user = $Users->find()->where(["email" => "admin@sigit.mg"])->first();
+        if (!$user) {
+            echo "Utilisateur non trouve.";
+            return;
+        }
+        $user->password = password_hash("Admin@2026", PASSWORD_DEFAULT);
+        if ($Users->save($user)) {
+            echo "Password mis a jour avec succes ! Utilisez: Admin@2026";
+        } else {
+            echo "Erreur: " . json_encode($user->getErrors());
+        }
+    }
 }
