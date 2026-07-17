@@ -29,7 +29,7 @@ class PagesController extends AppController
             "supervision_fonctionnement" => $Interventions->find()->where(array_merge($baseQuery, ["type_intervention"=>"supervision_fonctionnement"]))->count(),
             "supervision_analyse_pannes" => $Interventions->find()->where(array_merge($baseQuery, ["type_intervention"=>"supervision_analyse_pannes"]))->count(),
         ];
-        $livrablesList = $Livrables->find()->orderBy(["date_livrable"=>"DESC"])->limit(5)->toArray();
+        $livrablesList = $Livrables->find()->orderBy(["date_livraison"=>"DESC"])->limit(5)->toArray();
         $recentInterventions = $Interventions->find()->where($baseQuery)->orderBy(["created"=>"DESC"])->limit(10)->toArray();
         $this->set(compact("stats","livrablesList","recentInterventions","countByType","total","resolues","enCours","reparables"));
     }

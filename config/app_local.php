@@ -1,23 +1,24 @@
 <?php
+use function Cake\Core\env;
 return [
     "debug" => true,
     "Security" => [
         "salt" => "sigit-madagascar-repoblika-2025-secure-salt-key",
     ],
-    "Datasources" => [
-        "default" => [
-            "host"       => env("DB_HOST", "sql7.freesqldatabase.com"),
-"username"   => env("DB_USERNAME", "sql7830743"),
-"password"   => env("DB_PASSWORD", "X9UVEJYT3f"),
-"database"   => env("DB_DATABASE", "sql7830743"),
-            "driver"     => "Cake\\Database\\Driver\\Mysql",
-            "encoding"   => "utf8mb4",
-            "collation"  => "utf8mb4_unicode_ci",
-            "timezone"   => "UTC",
-            "port"       => env("DB_PORT", "3306"),
-            "persistent" => false,
-        ],
-    ],
+"Datasources" => [
+"default" => [
+"url"        => env("DATABASE_URL", null),
+"host"       => env("DB_HOST", "localhost"),
+"username"   => env("DB_USERNAME", "root"),
+"password"   => env("DB_PASSWORD", ""),
+"database"   => env("DB_DATABASE", "gestion_interventions"),
+"driver"     => "Cake\\Database\\Driver\\Mysql",
+"encoding"   => "utf8mb4",
+"timezone"   => "UTC",
+"port"       => env("DB_PORT", "3306"),
+"persistent" => false,
+],
+],
     "Cache" => [
         "default" => [
             "className" => "Cake\\Cache\\Engine\\FileEngine",

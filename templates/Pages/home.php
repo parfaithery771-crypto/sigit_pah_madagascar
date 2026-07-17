@@ -1,5 +1,5 @@
-﻿<?php $showOverlay = isset($showOverlay) ? $showOverlay : ""; ?>
-<?php $flashMsg = $this->Flash->render(); ?>
+﻿
+<?php $showOverlay = isset($showOverlay) ? $showOverlay : ""; ?>
 <div class="bg-canvas"></div>
 <div class="bg-pattern"></div>
 <div class="scan-line"></div>
@@ -52,7 +52,7 @@
       <h2 style="color:var(--or);letter-spacing:0.1em">&#9670; SIGIT &#9670;</h2>
       <p style="color:rgba(250,248,242,0.5);font-size:0.75rem;font-style:italic">Authentification securisee</p>
     </div>
-    <?= $flashMsg ?>
+    
     <form action="/users/login" method="post">
       <div class="form-group"><label>Email</label><input type="email" name="email" placeholder="votre@email.mg" required></div>
       <div class="form-group"><label>Mot de passe</label><input type="password" name="password" placeholder="........" required></div>
@@ -74,8 +74,9 @@
       <h2 style="color:var(--or)">&#9670; SIGIT &#9670;</h2>
       <p style="color:rgba(250,248,242,0.5);font-size:0.75rem;font-style:italic">Creer un nouveau compte</p>
     </div>
-    <?= $flashMsg ?>
-    <form action="/users/register" method="post">
+    <?= $this->Flash->render() ?>
+    <form action="/users/register"
+     method="post">
       <div class="form-group"><label>Nom *</label><input type="text" name="nom" placeholder="Votre nom" required></div>
       <div class="form-group"><label>Prenom</label><input type="text" name="prenom" placeholder="Votre prenom"></div>
       <div class="form-group"><label>Email *</label><input type="email" name="email" placeholder="votre@email.mg" required></div>

@@ -46,7 +46,7 @@ body,.dashboard-body{background:radial-gradient(ellipse at top,#1a1200,#000000,#
 <a href="/beneficiaires" class="nav-item">&#128101; Beneficiaires</a>
 <a href="/materiel" class="nav-item">&#128187; Parc Materiel</a>
 <a href="/rapports" class="nav-item">&#128196; Rapports</a>
-<a href="/admin/users" class="nav-item">&#128100; Utilisateurs</a>
+<a href="/admin/users" class="nav-item">&#128100; Utilisateurs <?php if(($pendingCount??0)>0): ?><span style="background:#C8102E;color:#fff;border-radius:50%;padding:0.1rem 0.45rem;font-size:0.65rem;font-weight:bold;margin-left:0.3rem"><?= $pendingCount ?></span><?php endif; ?></a>
 <?php endif; ?>
 <a href="/users/profile" class="nav-item">&#9881; Parametres</a>
 </nav>
