@@ -8,7 +8,6 @@ class PagesController extends AppController
     public function dashboard(): void
     {
         if (!$this->isLoggedIn()) { $this->redirect("/login"); return; }
-        $builder->connect('/debug-env', ['controller' => 'Pages', 'action' => 'debugEnv']);
         $Interventions = $this->getTableLocator()->get("Interventions");
         $Livrables = $this->getTableLocator()->get("Livrables");
         $userId = $this->currentUserId();
@@ -92,23 +91,5 @@ class PagesController extends AppController
         }
         $recentInterventions = $allInterventions;
         $this->set(compact("total","resolues","enCours","parType","grouped","recentInterventions"));
-    }
-
-    public function debugEnv(): void
-    {
-        $this->autoRender = false;
-        header('Content-Type: text/plain');
-        echo "DB_HOST: " . (getenv('DB_HOST') ?: 'VIDE') . "\n";
-        echo "DB_PORT: " . (getenv('DB_PORT') ?: 'VIDE') . "\n";
-        echo "DB_USERNAME: " . (getenv('DB_USERNAME') ?: 'VIDE') . "\n";
-        echo "DB_DATABASE: " . (getenv('DB_DATABASE') ?: 'VIDE') . "\n";
-        echo "DATABASE_URL: " . (getenv('DATABASE_URL') ?: 'VIDE') . "\n";
-        try {
-            $h = getenv('DB_HOST');
-            $pdo = new \PDO('mysql:host=' . $h . ';port=' . getenv('DB_PORT') . ';dbname=' . getenv('DB_DATABASE'), getenv('DB_USERNAME'), getenv('DB_PASSWORD'));
-            echo "CONNEXION: OK\n";
-        } catch (\Exception $e) {
-            echo "CONNEXION ERREUR: " . $e->getMessage() . "\n";
-        }
     }
 }
